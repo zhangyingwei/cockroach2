@@ -27,7 +27,7 @@ public class ExecuterManager {
     public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException {
         int numThread = this.config.getNumThread();
         for (int i = 0; i < numThread; i++) {
-            service.execute(new CockroachTaskExecotor(
+            service.execute(new TaskExecotor(
                     queue,
                     new CockroachHttpClient(this.config.getHttpClientClass().newInstance()),
                     this.createProxy(),
@@ -36,6 +36,7 @@ public class ExecuterManager {
                     this.config.getThreadSleep()
             ));
         }
+        service.shutdown();
     }
 
     private ICGenerator<ProxyInfo> createProxy() throws IllegalAccessException, InstantiationException {

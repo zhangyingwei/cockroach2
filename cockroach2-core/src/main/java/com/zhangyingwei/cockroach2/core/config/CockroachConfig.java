@@ -17,13 +17,13 @@ import lombok.Getter;
  */
 public class CockroachConfig {
     @Getter
-    private String appName;
+    private String appName = "Cockroach";
     @Getter
-    private int numThread;
+    private int numThread = 1;
     @Getter
-    private int threadSleep;
+    private int threadSleep = 500;
     @Getter
-    private Boolean autoClose;
+    private Boolean autoClose = false;
     @Getter
     private Class<? extends ICHttpClient> httpClientClass = COkHttpClient.class;
     @Getter

@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
  * @desc:
  */
 @Slf4j
-public class CockroachTaskExecotor implements ICTaskExecutor,Runnable {
+public class TaskExecotor implements ICTaskExecutor,Runnable {
     private String name = "exetucor-" + IdUtils.getId("TaskExecotor");
     private Boolean keepRun = true;
     private QueueHandler queue;
@@ -38,8 +38,7 @@ public class CockroachTaskExecotor implements ICTaskExecutor,Runnable {
     private IStore store;
     private int threadSleep;
 
-    public CockroachTaskExecotor(QueueHandler queue, CockroachHttpClient client, ICGenerator<ProxyInfo> proxy, IStore store, Boolean block, int threadSleep) {
-        this.keepRun = keepRun;
+    public TaskExecotor(QueueHandler queue, CockroachHttpClient client, ICGenerator<ProxyInfo> proxy, IStore store, Boolean block, int threadSleep) {
         this.queue = queue;
         this.block = block;
         this.proxy = proxy;
@@ -53,9 +52,17 @@ public class CockroachTaskExecotor implements ICTaskExecutor,Runnable {
         try {
             Task task = this.queue.get(this.block);
             if (task != null) {
-                CockroachRequest request = new CockroachRequest(task);
-                CockroachResponse response = this.client.proxy(proxy.generator()).exetute(request);
-                this.store.store(response);
+                if (this.validTask(task)) {
+                    CockroachRequest request = new CockroachRequest(task);
+                    ProxyInfo proxyInfo = null;
+                    if (proxy != null) {
+                        proxyInfo = proxy.generator();
+                    }
+                    log.debug("before execute...");
+                    CockroachResponse response = this.client.proxy(proxyInfo).exetute(request);
+                    log.debug("after execite...");
+                    this.store.store(response);
+                }
             }else {
                 log.debug("take task null");
             }
@@ -63,6 +70,10 @@ public class CockroachTaskExecotor implements ICTaskExecutor,Runnable {
         } catch (CockroachUrlNotValidException | IOException |InterruptedException e) {
             log.info(e.getLocalizedMessage());
         }
+    }
+
+    private boolean validTask(Task task) {
+        return task.getUrl() != null;
     }
 
     @Override

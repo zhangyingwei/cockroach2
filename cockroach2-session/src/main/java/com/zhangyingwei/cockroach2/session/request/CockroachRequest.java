@@ -2,7 +2,6 @@ package com.zhangyingwei.cockroach2.session.request;
 
 import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.common.enmus.RequestType;
-import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
 import com.zhangyingwei.cockroach2.queue.ICQueue;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,11 +20,8 @@ public class CockroachRequest {
     private ICQueue queue;
     private RequestHeader header;
 
-    public CockroachRequest(Task task) throws CockroachUrlNotValidException {
+    public CockroachRequest(Task task)  {
         this.task = task;
-        if (null == task.getUrl()) {
-            throw new CockroachUrlNotValidException(task.getUrl());
-        }
         this.header = new RequestHeader();
     }
 

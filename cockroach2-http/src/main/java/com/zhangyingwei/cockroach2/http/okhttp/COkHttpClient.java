@@ -1,5 +1,6 @@
 package com.zhangyingwei.cockroach2.http.okhttp;
 
+import com.zhangyingwei.cockroach2.common.enmus.ProxyType;
 import com.zhangyingwei.cockroach2.common.enmus.RequestType;
 import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
@@ -67,8 +68,13 @@ public class COkHttpClient implements ICHttpClient {
 
     @Override
     public ICHttpClient proxy(ProxyInfo proxyInfo) {
-        Proxy.Type proxyType = Proxy.Type.HTTP;
         if (proxyInfo != null) {
+            Proxy.Type proxyType = Proxy.Type.HTTP;
+            if (ProxyType.HTTP.equals(proxyInfo.getProxyType())) {
+                proxyType = Proxy.Type.HTTP;
+            } else if (ProxyType.SOCKET5.equals(proxyInfo.getProxyType())) {
+                proxyType = Proxy.Type.SOCKS;
+            }
             this.clientBuilder = this.clientBuilder.proxy(
                     new Proxy(
                             proxyType, new InetSocketAddress(proxyInfo.getIp(), proxyInfo.getPort())
@@ -93,7 +99,7 @@ public class COkHttpClient implements ICHttpClient {
         try {
             return this.clientBuilder.build().newCall(request).execute();
         } catch (IOException e) {
-            log.info("http get error: {}", e.getLocalizedMessage());
+            log.error("http get error: {}", e.getLocalizedMessage());
             return null;
         }
     }

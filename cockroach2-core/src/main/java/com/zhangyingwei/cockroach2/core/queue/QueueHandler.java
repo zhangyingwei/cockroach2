@@ -3,8 +3,8 @@ package com.zhangyingwei.cockroach2.core.queue;
 import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.core.queue.filter.ICQueueFilter;
+import com.zhangyingwei.cockroach2.queue.ICQueue;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.HashSet;
 import java.util.Set;
 

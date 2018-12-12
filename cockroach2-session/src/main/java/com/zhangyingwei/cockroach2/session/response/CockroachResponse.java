@@ -14,14 +14,12 @@ import lombok.extern.slf4j.Slf4j;
  * @desc:
  */
 @Slf4j
-@RequiredArgsConstructor
 public class CockroachResponse {
     @Getter @Setter
     private boolean success;
     @Getter@Setter
     private int code;
     @Getter
-    @NonNull
     private Task task;
     @Getter @Setter
     private ICQueue queue;
@@ -29,4 +27,8 @@ public class CockroachResponse {
     private CockroachResponseContent content;
     @Getter @Setter
     private ResponseHeaders headers;
+
+    public CockroachResponse(Task task) {
+        this.task = task;
+    }
 }

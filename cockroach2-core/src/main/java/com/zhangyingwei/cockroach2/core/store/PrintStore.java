@@ -16,12 +16,12 @@ public class PrintStore implements IStore {
     public void store(CockroachResponse response) {
         if (response.isSuccess()) {
             try {
-                log.info(response.getContent().string());
+                System.out.println("responst: " + response.getContent().string());
             } catch (IOException e) {
-                log.info("get string error:{}", e.getLocalizedMessage());
+                System.out.println("get string error: " + e.getLocalizedMessage());
             }
         } else {
-            log.info("task error");
+            System.out.println("task error");
         }
     }
 }
