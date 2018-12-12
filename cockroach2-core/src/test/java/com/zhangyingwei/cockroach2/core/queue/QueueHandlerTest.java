@@ -1,8 +1,8 @@
 package com.zhangyingwei.cockroach2.core.queue;
 
 
-import com.zhangyingwei.cockroach2.core.executor.Task;
-import com.zhangyingwei.cockroach2.request.RequestType;
+import com.zhangyingwei.cockroach2.common.Task;
+import com.zhangyingwei.cockroach2.common.enmus.RequestType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 

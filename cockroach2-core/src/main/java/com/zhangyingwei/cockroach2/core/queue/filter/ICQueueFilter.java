@@ -1,6 +1,6 @@
 package com.zhangyingwei.cockroach2.core.queue.filter;
 
-import com.zhangyingwei.cockroach2.core.executor.Task;
+import com.zhangyingwei.cockroach2.common.Task;
 
 /**
  * @author zhangyw

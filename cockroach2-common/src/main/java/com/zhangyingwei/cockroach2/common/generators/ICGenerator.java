@@ -1,0 +1,10 @@
+package com.zhangyingwei.cockroach2.common.generators;
+
+/**
+ * @author zhangyw
+ * @date: 2018/12/12
+ * @desc:
+ */
+public interface ICGenerator<T> {
+    T generator();
+}

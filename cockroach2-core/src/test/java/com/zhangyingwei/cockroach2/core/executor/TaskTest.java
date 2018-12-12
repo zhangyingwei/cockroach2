@@ -1,16 +1,13 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
-import lombok.extern.log4j.Log4j;
+import com.zhangyingwei.cockroach2.common.Task;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * @author zhangyw

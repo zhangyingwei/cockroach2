@@ -5,11 +5,11 @@
     <parent>
         <artifactId>cockroach2</artifactId>
         <groupId>com.zhangyingwei.cockroach</groupId>
-        <version>${cockroach2.version}</version>
+        <version>0.0.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cockroach2-core</artifactId>
+    <artifactId>cockroach2-session</artifactId>
 
 
     <dependencies>
@@ -21,13 +21,14 @@
         <dependency>
             <groupId>com.zhangyingwei.cockroach</groupId>
             <artifactId>cockroach2-queue</artifactId>
-            <version>${cockroach2.version}</version>
+            <version>0.0.1</version>
+            <scope>compile</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
         <dependency>
-            <groupId>com.zhangyingwei.cockroach</groupId>
-            <artifactId>cockroach2-http</artifactId>
-            <version>${cockroach2.version}</version>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.11.2</version>
         </dependency>
     </dependencies>
-
 </project>

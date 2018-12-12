@@ -6,5 +6,6 @@ package com.zhangyingwei.cockroach2.core.executor;
  * @desc:
  */
 public interface ICTaskExecutor {
-
+    void execute();
+    void stop();
 }

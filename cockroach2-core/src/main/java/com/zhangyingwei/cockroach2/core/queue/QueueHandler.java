@@ -1,7 +1,7 @@
 package com.zhangyingwei.cockroach2.core.queue;
 
 import com.zhangyingwei.cockroach2.common.Constants;
-import com.zhangyingwei.cockroach2.core.executor.Task;
+import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.core.queue.filter.ICQueueFilter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,5 +62,15 @@ public class QueueHandler implements ICQueue {
         if (accept) {
             this.queue.add(task);
         }
+    }
+
+    @Override
+    public int size() {
+        return this.queue.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.queue.isEmpty();
     }
 }
