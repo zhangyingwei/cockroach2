@@ -14,6 +14,6 @@ import java.io.IOException;
  * @desc:
  */
 public interface ICHttpClient {
-    CockroachResponse exetute(CockroachRequest request) throws IOException, CockroachUrlNotValidException;
+    CockroachResponse exetute(CockroachRequest request);
     ICHttpClient proxy(ProxyInfo proxyInfo);
 }

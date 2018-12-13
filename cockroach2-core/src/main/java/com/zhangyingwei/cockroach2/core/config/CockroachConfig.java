@@ -9,12 +9,14 @@ import com.zhangyingwei.cockroach2.http.ICHttpClient;
 import com.zhangyingwei.cockroach2.http.okhttp.COkHttpClient;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author zhangyw
  * @date: 2018/12/12
  * @desc:
  */
+@Slf4j
 public class CockroachConfig {
     @Getter
     private String appName = "Cockroach";
@@ -78,5 +80,17 @@ public class CockroachConfig {
     public CockroachConfig proxyGenerator(Class<? extends ICGenerator<ProxyInfo>> proxyGenerator) {
         this.proxyGeneratorClass = proxyGenerator;
         return this;
+    }
+
+    public void print() {
+        log.info("appName: {}", appName);
+        log.info("numThread: {}", numThread);
+        log.info("threadSleep: {}", threadSleep);
+        log.info("autoClose: {}", autoClose);
+        log.info("httpClientClass: {}", httpClientClass);
+        log.info("storeClass: {}", storeClass);
+        log.info("cookieGeneratorClass: {}", cookieGeneratorClass);
+        log.info("headerGeneratorClass: {}", headerGeneratorClass);
+        log.info("proxyGeneratorClass: {}", proxyGeneratorClass);
     }
 }

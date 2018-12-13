@@ -27,12 +27,12 @@ public class ExecuterManager {
     public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException {
         int numThread = this.config.getNumThread();
         for (int i = 0; i < numThread; i++) {
-            service.execute(new TaskExecotor(
+            this.service.execute(new TaskExecotor(
                     queue,
                     new CockroachHttpClient(this.config.getHttpClientClass().newInstance()),
                     this.createProxy(),
                     this.config.getStoreClass().newInstance(),
-                    this.config.getAutoClose(),
+                    !this.config.getAutoClose(),
                     this.config.getThreadSleep()
             ));
         }

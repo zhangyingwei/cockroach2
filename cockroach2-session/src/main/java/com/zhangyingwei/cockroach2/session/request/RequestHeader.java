@@ -38,7 +38,7 @@ public class RequestHeader {
 
     private void initHeaders() {
         this.headers.put(ACCEPT_KEY, ACCEPT_VALUE);
-        this.headers.put(ACCEPT_ENCODING_KEY, ACCEPT_ENCODING_VALUE);
+//        this.headers.put(ACCEPT_ENCODING_KEY, ACCEPT_ENCODING_VALUE);
         this.headers.put(ACCEPT_LANGUAGE_KEY, ACCEPT_LANGUAGE_VALUE);
         this.headers.put(CACHE_CONTROL_KEY, CACHE_CONTROL_VALUE);
         this.headers.put(CONNECTION_KEY, CONNECTION_VALUE);

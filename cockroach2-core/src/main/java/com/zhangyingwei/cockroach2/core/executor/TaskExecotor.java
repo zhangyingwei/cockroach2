@@ -5,20 +5,13 @@ import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
-import com.zhangyingwei.cockroach2.core.CockroachContext;
-import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import com.zhangyingwei.cockroach2.core.store.IStore;
-import com.zhangyingwei.cockroach2.http.ICHttpClient;
-import com.zhangyingwei.cockroach2.http.proxy.ICHttpProxy;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
@@ -48,28 +41,23 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
     }
 
     @Override
-    public void execute() {
-        try {
-            Task task = this.queue.get(this.block);
-            if (task != null) {
-                if (this.validTask(task)) {
-                    CockroachRequest request = new CockroachRequest(task);
-                    ProxyInfo proxyInfo = null;
-                    if (proxy != null) {
-                        proxyInfo = proxy.generator();
-                    }
-                    log.debug("before execute...");
-                    CockroachResponse response = this.client.proxy(proxyInfo).exetute(request);
-                    log.debug("after execite...");
-                    this.store.store(response);
+    public Task execute() {
+        Task task = this.queue.get(this.block);
+        if (task != null) {
+            if (this.validTask(task)) {
+                CockroachRequest request = new CockroachRequest(task);
+                ProxyInfo proxyInfo = null;
+                if (proxy != null) {
+                    proxyInfo = proxy.generator();
                 }
-            }else {
-                log.debug("take task null");
+                CockroachResponse response = this.client.proxy(proxyInfo).exetute(request);
+                this.store.store(response);
+                response.close();
             }
-            TimeUnit.MILLISECONDS.sleep(this.threadSleep);
-        } catch (CockroachUrlNotValidException | IOException |InterruptedException e) {
-            log.info(e.getLocalizedMessage());
+        }else {
+            log.debug("take task null");
         }
+        return task;
     }
 
     private boolean validTask(Task task) {
@@ -85,7 +73,17 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
     public void run() {
         Thread.currentThread().setName(this.name);
         while (keepRun) {
-            this.execute();
+            try {
+                Task task = this.execute();
+                if (task == null) {
+                    break;
+                }
+                TimeUnit.MILLISECONDS.sleep(this.threadSleep);
+            } catch (Exception e) {
+                log.info(e.getLocalizedMessage());
+            }finally {
+//                log.info("thread end");
+            }
         }
     }
 }

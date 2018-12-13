@@ -18,13 +18,16 @@ import lombok.extern.slf4j.Slf4j;
 public class CockroachContext {
     private boolean start = false;
     private ExecuterManager executerManager;
+    private CockroachConfig config;
 
     public CockroachContext(CockroachConfig config) {
         this.executerManager = new ExecuterManager(config);
+        this.config = config;
     }
 
     public void start(QueueHandler queue) {
         if (!start) {
+            this.printAppInfo();
             log.info("starting...");
             try {
                 this.executerManager.start(queue);
@@ -37,5 +40,9 @@ public class CockroachContext {
         } else {
             log.warn("cockroach had already bean started");
         }
+    }
+
+    private void printAppInfo() {
+        this.config.print();
     }
 }

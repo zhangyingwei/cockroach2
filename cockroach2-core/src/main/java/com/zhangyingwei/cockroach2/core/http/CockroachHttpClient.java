@@ -22,7 +22,7 @@ public class CockroachHttpClient implements ICHttpClient {
     private ICHttpClient client;
 
     @Override
-    public CockroachResponse exetute(CockroachRequest request) throws IOException, CockroachUrlNotValidException {
+    public CockroachResponse exetute(CockroachRequest request) {
         return this.client.exetute(request);
     }
 

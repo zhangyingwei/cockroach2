@@ -15,6 +15,14 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 public class ResponseHeaders {
-    @Getter @Setter @NonNull
+    @Setter @NonNull
     private Map<String, List<String>> headers;
+
+    public Map<String, List<String>> getAll() {
+        return this.headers;
+    }
+
+    public List<String> getByKey(String key) {
+        return this.headers.get(key);
+    }
 }

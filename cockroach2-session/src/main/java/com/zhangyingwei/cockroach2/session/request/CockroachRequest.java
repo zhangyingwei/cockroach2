@@ -31,7 +31,7 @@ public class CockroachRequest {
                 return entity.getKey().concat("=").concat(entity.getValue());
             }).reduce((left, right) -> {
                 return left.concat("&").concat(right);
-            }).get();
+            }).orElse("");
             return this.task.getUrl().concat(paramsContent);
         }else {
             return this.getUrl();

@@ -35,7 +35,7 @@ public class COkHttpClient implements ICHttpClient {
     }
 
     @Override
-    public CockroachResponse exetute(CockroachRequest request) throws CockroachUrlNotValidException {
+    public CockroachResponse exetute(CockroachRequest request) {
         CockroachResponse cockroachResponse = new CockroachResponse(request.getTask());
         Response response = null;
         switch (request.getRequestType()) {
@@ -52,9 +52,13 @@ public class COkHttpClient implements ICHttpClient {
         if (response == null) {
             cockroachResponse.setSuccess(false);
         } else {
-            cockroachResponse.setContent(
-                    new CockroachResponseContent(response.body().byteStream())
-            );
+            CockroachResponseContent content = new CockroachResponseContent(new byte[0]);
+            try {
+                content = new CockroachResponseContent(response.body().bytes());
+            } catch (IOException e) {
+                log.error(e.getLocalizedMessage());
+            }
+            cockroachResponse.setContent(content);
             cockroachResponse.setHeaders(
                     new ResponseHeaders(response.headers().toMultimap())
             );

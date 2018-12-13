@@ -7,15 +7,16 @@ import java.io.IOException;
 
 /**
  * @author zhangyw
- * @date: 2018/12/12
+ * @date: 2018/12/13
  * @desc:
  */
 @Slf4j
-public class PrintStore implements IStore {
+public class HtmlTitleStore implements IStore {
+
     @Override
     public void store(CockroachResponse response) {
         if (response.isSuccess()) {
-            log.info("responst: " + response.getContent().charset("UTF-8").string());
+            log.info("title({})",response.select("title").text());
         } else {
             log.info("task error");
         }

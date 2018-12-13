@@ -21,7 +21,7 @@ import java.util.Map;
 @Slf4j
 public class Task implements Comparable<Task> {
     private Long id = IdUtils.getId(Task.class.getName());
-    @Setter
+    @Setter @Getter
     private String group = Constants.TASK_GROUP_DEFAULT;
     @Getter @Setter
     private String url;
