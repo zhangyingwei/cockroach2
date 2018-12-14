@@ -27,7 +27,7 @@ public class CockroachResponse {
     private boolean success;
     @Getter@Setter
     private int code;
-    @Getter
+    @Getter @Setter
     private Task task;
     @Getter @Setter
     private ICQueue queue;
@@ -36,8 +36,12 @@ public class CockroachResponse {
     @Getter @Setter
     private ResponseHeaders headers;
 
-    public CockroachResponse(Task task) {
+    public CockroachResponse(CockroachResponseContent content, ResponseHeaders header, Integer code, Boolean success) {
         this.task = task;
+        this.content = content;
+        this.headers = header;
+        this.code = code;
+        this.success = success;
     }
 
 

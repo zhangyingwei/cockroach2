@@ -71,4 +71,9 @@ public class TaskQueue implements ICQueue {
     public boolean isEmpty() {
         return this.queue.isEmpty();
     }
+
+    //TODO
+    class TaskBlockQueue extends PriorityBlockingQueue<Task> {
+
+    }
 }

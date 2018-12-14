@@ -3,6 +3,7 @@ package com.zhangyingwei.cockroach2.core.executor;
 
 import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
+import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
@@ -52,15 +53,21 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
                         proxyInfo = proxy.generator();
                     }
                     CockroachResponse response = this.client.proxy(proxyInfo).exetute(request);
-                    response.setQueue(this.queue);
-                    this.store.store(response);
-                    response.close();
+                    if (response != null) {
+                        response.setQueue(this.queue);
+                        this.store.store(response);
+                        response.close();
+                    }
                 }
             } else {
                 log.debug("take task null");
             }
-        } catch (Exception e) {
+        } catch (TaskExecuteException e) {
             log.info("execure error with task {}: {}", task, e.getLocalizedMessage());
+            if (task.needRetry()) {
+                this.queue.add(task);
+                log.info("make task retry: {}", task);
+            }
         }
         return task;
     }

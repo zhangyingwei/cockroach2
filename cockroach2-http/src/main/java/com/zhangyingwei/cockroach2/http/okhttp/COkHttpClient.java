@@ -3,6 +3,7 @@ package com.zhangyingwei.cockroach2.http.okhttp;
 import com.zhangyingwei.cockroach2.common.enmus.ProxyType;
 import com.zhangyingwei.cockroach2.common.enmus.RequestType;
 import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
+import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
 import com.zhangyingwei.cockroach2.http.params.HeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
@@ -36,39 +37,71 @@ public class COkHttpClient implements ICHttpClient {
     }
 
     @Override
-    public CockroachResponse exetute(CockroachRequest request) {
-        CockroachResponse cockroachResponse = new CockroachResponse(request.getTask());
+    public CockroachResponse exetute(CockroachRequest request) throws TaskExecuteException {
+//        try {
+//            CockroachResponse cockroachResponse = new CockroachResponse(request.getTask());
+//            Response response = null;
+//            switch (request.getRequestType()) {
+//                case GET:
+//                    response = this.doGet(request);
+//                    break;
+//                case POST:
+//                    response = this.doPost(request);
+//                    break;
+//                default:
+//                    log.info("request type ({}) was not supported now", request.getRequestType());
+//                    break;
+//            }
+//            if (response == null) {
+//                cockroachResponse.setSuccess(false);
+//            } else {
+//                CockroachResponseContent content = new CockroachResponseContent(new byte[0]);
+//                content = new CockroachResponseContent(response.body().bytes());
+//                cockroachResponse.setContent(content);
+//                cockroachResponse.setHeaders(
+//                        new ResponseHeaders(response.headers().toMultimap())
+//                );
+//                cockroachResponse.setCode(
+//                        response.code()
+//                );
+//                cockroachResponse.setSuccess(true);
+//            }
+//            return cockroachResponse;
+//        } catch (Exception e) {
+//            throw new TaskExecuteException(e);
+//        }
+//
         Response response = null;
-        switch (request.getRequestType()) {
-            case GET:
-                response = this.doGet(request);
-                break;
-            case POST:
-                response = this.doPost(request);
-                break;
-            default:
-                log.info("request type ({}) was not supported now",request.getRequestType());
-                break;
+        try {
+            switch (request.getRequestType()) {
+                case GET:
+                    response = this.doGet(request);
+                    break;
+                case POST:
+                    response = this.doPost(request);
+                    break;
+                default:
+                    log.info("request type ({}) was not supported now", request.getRequestType());
+                    break;
+            }
+        } catch (Exception e) {
+            throw new TaskExecuteException(e);
         }
-        if (response == null) {
-            cockroachResponse.setSuccess(false);
-        } else {
-            CockroachResponseContent content = new CockroachResponseContent(new byte[0]);
+        CockroachResponseContent content = null;
+        ResponseHeaders header = null;
+        Integer code = null;
+        Boolean success = false;
+        if (response != null) {
             try {
                 content = new CockroachResponseContent(response.body().bytes());
             } catch (IOException e) {
-                log.error(e.getLocalizedMessage());
+                log.error("get response body error: {} ",e.getLocalizedMessage());
             }
-            cockroachResponse.setContent(content);
-            cockroachResponse.setHeaders(
-                    new ResponseHeaders(response.headers().toMultimap())
-            );
-            cockroachResponse.setCode(
-                    response.code()
-            );
-            cockroachResponse.setSuccess(true);
+            header = new ResponseHeaders(response.headers().toMultimap());
+            code = response.code();
+            success = true;
         }
-        return cockroachResponse;
+        return new CockroachResponse(content, header, code, success);
     }
 
     @Override

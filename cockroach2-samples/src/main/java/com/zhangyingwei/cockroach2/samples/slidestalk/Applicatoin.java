@@ -15,9 +15,9 @@ public class Applicatoin {
     public static void main(String[] args) {
         CockroachConfig config = new CockroachConfig()
                 .appName("示说网爬虫")
-                .autoClose(false)
+                .autoClose(true)
                 .threadSeep(1000)
-                .numThread(17)
+                .numThread(1)
                 .store(MainStore.class);
         CockroachContext context = new CockroachContext(config);
         context.start(getQueue());

@@ -37,7 +37,7 @@ public class Task implements Comparable<Task> {
     /**
      * 任务重试次数
      */
-    private Integer retry = Constants.TASK_RETRY;
+    private Integer tryNum = Constants.TASK_RETRY;
     /**
      * 任务优先级
      */
@@ -62,14 +62,18 @@ public class Task implements Comparable<Task> {
         return this;
     }
 
-    public Task retry(Integer num) {
-        this.retry = num;
+    public Task tryNum(Integer num) {
+        this.tryNum = num;
         return this;
     }
 
+    public Boolean needRetry() {
+        return this.tryNum > 0;
+    }
+
     public Task tryOne() {
-        this.retry -= 1;
-        if (this.retry < 0) {
+        this.tryNum -= 1;
+        if (this.tryNum < 0) {
             log.info("Task({}) retry is over",this.id);
             return null;
         }

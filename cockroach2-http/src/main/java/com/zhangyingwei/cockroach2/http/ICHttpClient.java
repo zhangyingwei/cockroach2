@@ -2,6 +2,7 @@ package com.zhangyingwei.cockroach2.http;
 
 
 import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
+import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
@@ -14,6 +15,6 @@ import java.io.IOException;
  * @desc:
  */
 public interface ICHttpClient {
-    CockroachResponse exetute(CockroachRequest request);
+    CockroachResponse exetute(CockroachRequest request) throws TaskExecuteException;
     ICHttpClient proxy(ProxyInfo proxyInfo);
 }

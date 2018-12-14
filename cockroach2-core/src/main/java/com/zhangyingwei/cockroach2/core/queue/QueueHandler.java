@@ -46,7 +46,7 @@ public class QueueHandler implements ICQueue {
 
     @Override
     public Task get(Boolean withBlock) {
-        return queue.get(withBlock);
+        return queue.get(withBlock).tryOne();
     }
 
     @Override

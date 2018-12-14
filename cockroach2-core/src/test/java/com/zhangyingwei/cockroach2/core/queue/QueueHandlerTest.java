@@ -17,7 +17,7 @@ public class QueueHandlerTest {
     public void test1() {
         QueueHandler handler = QueueHandler.initWithDefaultQueue(10);
         for (int i = 0; i < 100; i++) {
-            handler.add(new Task("url").doWith(RequestType.POST).group("group".concat(i+"")).retry(100));
+            handler.add(new Task("url").doWith(RequestType.POST).group("group".concat(i+"")).tryNum(100));
         }
         for (int i = 0; i < 101; i++) {
             handler.get(false);

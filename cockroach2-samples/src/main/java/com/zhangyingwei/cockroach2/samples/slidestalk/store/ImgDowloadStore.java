@@ -21,23 +21,24 @@ import java.util.Map;
 public class ImgDowloadStore implements IStore {
     @Override
     public void store(CockroachResponse response) {
-        Map<String,String> datas = response.getTask().getData();
-        try {
-            String title = datas.get("name");
-            String imgName = datas.get("imgName");
-            byte[] bytes = response.getContent().bytes();
-            File dir = new File(title);
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            File img = new File(title.concat("/").concat(imgName));
-            img.createNewFile();
-            OutputStream out = new FileOutputStream(img);
-            out.write(bytes);
-            out.close();
-            log.info("save file: {}",title.concat("/").concat(imgName));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        log.info("download image...");
+//        Map<String,String> datas = response.getTask().getData();
+//        try {
+//            String title = datas.get("name");
+//            String imgName = datas.get("imgName");
+//            byte[] bytes = response.getContent().bytes();
+//            File dir = new File(title);
+//            if (!dir.exists()) {
+//                dir.mkdirs();
+//            }
+//            File img = new File(title.concat("/").concat(imgName));
+//            img.createNewFile();
+//            OutputStream out = new FileOutputStream(img);
+//            out.write(bytes);
+//            out.close();
+//            log.info("save file: {}",title.concat("/").concat(imgName));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 }
