@@ -43,19 +43,24 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
     @Override
     public Task execute() {
         Task task = this.queue.get(this.block);
-        if (task != null) {
-            if (this.validTask(task)) {
-                CockroachRequest request = new CockroachRequest(task);
-                ProxyInfo proxyInfo = null;
-                if (proxy != null) {
-                    proxyInfo = proxy.generator();
+        try {
+            if (task != null) {
+                if (this.validTask(task)) {
+                    CockroachRequest request = new CockroachRequest(task);
+                    ProxyInfo proxyInfo = null;
+                    if (proxy != null) {
+                        proxyInfo = proxy.generator();
+                    }
+                    CockroachResponse response = this.client.proxy(proxyInfo).exetute(request);
+                    response.setQueue(this.queue);
+                    this.store.store(response);
+                    response.close();
                 }
-                CockroachResponse response = this.client.proxy(proxyInfo).exetute(request);
-                this.store.store(response);
-                response.close();
+            } else {
+                log.debug("take task null");
             }
-        }else {
-            log.debug("take task null");
+        } catch (Exception e) {
+            log.info("execure error with task {}: {}", task, e.getLocalizedMessage());
         }
         return task;
     }
@@ -73,16 +78,14 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
     public void run() {
         Thread.currentThread().setName(this.name);
         while (keepRun) {
+            Task task = this.execute();
+            if (task == null) {
+                break;
+            }
             try {
-                Task task = this.execute();
-                if (task == null) {
-                    break;
-                }
                 TimeUnit.MILLISECONDS.sleep(this.threadSleep);
-            } catch (Exception e) {
-                log.info(e.getLocalizedMessage());
-            }finally {
-//                log.info("thread end");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

@@ -19,6 +19,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author zhangyw
@@ -31,7 +32,7 @@ public class COkHttpClient implements ICHttpClient {
     private OkHttpClient.Builder clientBuilder;
 
     public COkHttpClient() {
-        this.clientBuilder = new OkHttpClient.Builder();
+        this.clientBuilder = new OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS);
     }
 
     @Override

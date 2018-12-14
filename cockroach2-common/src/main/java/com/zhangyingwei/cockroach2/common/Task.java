@@ -53,7 +53,7 @@ public class Task implements Comparable<Task> {
         this.url = url;
     }
 
-    public <T> T getResources() {
+    public <T> T getData() {
         return (T) data;
     }
 
@@ -92,14 +92,14 @@ public class Task implements Comparable<Task> {
      * @return
      */
     public Task lowerPriorityBy(Task fatherTask) {
-        this.priority = fatherTask.getPriority() + 1;
+        this.priority = fatherTask.getPriority() - 1;
         return this;
     }
 
 
     @Override
     public int compareTo(Task other) {
-        int priorityCompare = other.getPriority() - this.getPriority();
+        int priorityCompare = this.getPriority() - other.getPriority();
         if (priorityCompare != 0) {
             return priorityCompare;
         }
@@ -116,6 +116,7 @@ public class Task implements Comparable<Task> {
         return "Task{" +
                 "id:" + id +
                 ", group:'" + group + '\'' +
+                ", priority:'" + priority + '\'' +
                 ", url:'" + url + '\'' +
                 ", params:" + params +
                 ", requestType:" + requestType +

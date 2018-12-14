@@ -17,6 +17,13 @@
             <artifactId>cockroach2-core</artifactId>
             <version>${cockroach2.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.birt.runtime.3_7_1/com.lowagie.text -->
+        <dependency>
+            <groupId>org.eclipse.birt.runtime.3_7_1</groupId>
+            <artifactId>com.lowagie.text</artifactId>
+            <version>2.1.7</version>
+        </dependency>
+
     </dependencies>
 
 </project>

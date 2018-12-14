@@ -27,7 +27,7 @@ public class TaskTest {
             }
         };
         task.setData(data);
-        Map data2 = task.getResources();
+        Map data2 = task.getData();
         log.info("hello log");
         Assert.assertEquals(data, data2);
     }
