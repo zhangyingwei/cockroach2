@@ -63,7 +63,7 @@ public class CockroachResponse {
     //TODO 不好使
     private Elements xpath(String xpath) throws XpathSyntaxErrorException {
         List<Element> elements = this.content.toXDocument().selN(xpath).stream().map(node -> node.getElement()).collect(Collectors.toList());
-        return new Elements(Optional.ofNullable(elements).orElse(new ArrayList<Element>()));
+        return new Elements(Optional.ofNullable(elements).orElse(new ArrayList<>()));
     }
 
     public Boolean isGroup(String group) {

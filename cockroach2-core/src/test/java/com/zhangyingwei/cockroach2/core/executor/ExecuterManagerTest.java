@@ -13,6 +13,5 @@ public class ExecuterManagerTest {
 
     @Test
     public void testThread() {
-
     }
 }

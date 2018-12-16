@@ -13,8 +13,7 @@ public class CockroachContextSelectorTest {
     public static void main(String[] args) {
         CockroachConfig config = new CockroachConfig().appName("name")
                 .threadSeep(1000)
-                .store(StoreTest.class)
-                .autoClose(true);
+                .store(StoreTest.class);
         CockroachContext context = new CockroachContext(config);
         QueueHandler queueHandler = QueueHandler.initWithDefaultQueue();
         queueHandler.add(new Task("http://blog.zhangyingwei.com"));

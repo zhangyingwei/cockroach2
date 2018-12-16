@@ -57,4 +57,8 @@ public class RequestHeader {
     public void setHeader(String key,String value) {
         this.headers.put(key, value);
     }
+
+    public void setHeaders(Map<String,String> headers) {
+        this.headers.putAll(headers);
+    }
 }

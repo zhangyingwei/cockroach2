@@ -27,11 +27,9 @@ public class CockroachRequest {
 
     public String getUrl() {
         if (RequestType.GET.equals(this.task.getRequestType())) {
-            String paramsContent = this.task.getParams().entrySet().stream().map(entity -> {
-                return entity.getKey().concat("=").concat(entity.getValue());
-            }).reduce((left, right) -> {
-                return left.concat("&").concat(right);
-            }).orElse("");
+            String paramsContent = this.task.getParams().entrySet().stream()
+                    .map(entity -> entity.getKey().concat("=").concat(entity.getValue()))
+                    .reduce((left, right) -> left.concat("&").concat(right)).orElse("");
             return this.task.getUrl().concat(paramsContent);
         }else {
             return this.getUrl();
@@ -42,7 +40,7 @@ public class CockroachRequest {
         return task.getRequestType();
     }
 
-    public RequestHeader getHeaders() {
+    public RequestHeader getHeader() {
         return this.header;
     }
 

@@ -9,7 +9,7 @@ import com.zhangyingwei.cockroach2.common.Task;
  * @desc:
  */
 public interface ICQueue {
-    Task get(Boolean withBlock);
+    Task get();
     void add(Task task);
     int size();
     boolean isEmpty();

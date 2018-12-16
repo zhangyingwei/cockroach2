@@ -1,11 +1,8 @@
 package com.zhangyingwei.cockroach2.http.okhttp;
 
 import com.zhangyingwei.cockroach2.common.enmus.ProxyType;
-import com.zhangyingwei.cockroach2.common.enmus.RequestType;
-import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
 import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
-import com.zhangyingwei.cockroach2.http.params.HeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
@@ -18,8 +15,6 @@ import okhttp3.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -37,40 +32,7 @@ public class COkHttpClient implements ICHttpClient {
     }
 
     @Override
-    public CockroachResponse exetute(CockroachRequest request) throws TaskExecuteException {
-//        try {
-//            CockroachResponse cockroachResponse = new CockroachResponse(request.getTask());
-//            Response response = null;
-//            switch (request.getRequestType()) {
-//                case GET:
-//                    response = this.doGet(request);
-//                    break;
-//                case POST:
-//                    response = this.doPost(request);
-//                    break;
-//                default:
-//                    log.info("request type ({}) was not supported now", request.getRequestType());
-//                    break;
-//            }
-//            if (response == null) {
-//                cockroachResponse.setSuccess(false);
-//            } else {
-//                CockroachResponseContent content = new CockroachResponseContent(new byte[0]);
-//                content = new CockroachResponseContent(response.body().bytes());
-//                cockroachResponse.setContent(content);
-//                cockroachResponse.setHeaders(
-//                        new ResponseHeaders(response.headers().toMultimap())
-//                );
-//                cockroachResponse.setCode(
-//                        response.code()
-//                );
-//                cockroachResponse.setSuccess(true);
-//            }
-//            return cockroachResponse;
-//        } catch (Exception e) {
-//            throw new TaskExecuteException(e);
-//        }
-//
+    public CockroachResponse execute(CockroachRequest request) throws TaskExecuteException {
         Response response = null;
         try {
             switch (request.getRequestType()) {
@@ -132,7 +94,7 @@ public class COkHttpClient implements ICHttpClient {
     private Response doGet(CockroachRequest cockroachRequest) {
         Request request = new Request.Builder()
                 .url(cockroachRequest.getUrl())
-                .headers(Headers.of(cockroachRequest.getHeaders().getHeaders()))
+                .headers(Headers.of(cockroachRequest.getHeader().getHeaders()))
                 .get().build();
         try {
             return this.clientBuilder.build().newCall(request).execute();
@@ -156,7 +118,7 @@ public class COkHttpClient implements ICHttpClient {
 
         Request request = new Request.Builder()
                 .url(cockroachRequest.getUrl())
-                .headers(Headers.of(cockroachRequest.getHeaders().getHeaders()))
+                .headers(Headers.of(cockroachRequest.getHeader().getHeaders()))
                 .post(requestBody).build();
         try {
             return this.clientBuilder.build().newCall(request).execute();

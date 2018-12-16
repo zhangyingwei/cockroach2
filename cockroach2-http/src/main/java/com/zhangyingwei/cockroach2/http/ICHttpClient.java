@@ -15,6 +15,6 @@ import java.io.IOException;
  * @desc:
  */
 public interface ICHttpClient {
-    CockroachResponse exetute(CockroachRequest request) throws TaskExecuteException;
+    CockroachResponse execute(CockroachRequest request) throws TaskExecuteException;
     ICHttpClient proxy(ProxyInfo proxyInfo);
 }

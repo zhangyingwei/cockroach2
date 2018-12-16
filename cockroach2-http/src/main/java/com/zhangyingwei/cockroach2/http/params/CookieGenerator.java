@@ -1,15 +1,12 @@
 package com.zhangyingwei.cockroach2.http.params;
 
-import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.common.generators.ICMapGenerator;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.zhangyingwei.cockroach2.common.generators.ICStringGenerator;
 
 /**
  * @author zhangyw
  * @date: 2018/12/12
  * @desc:
  */
-public interface HeaderGenerator extends ICMapGenerator {
+public interface CookieGenerator extends ICStringGenerator {
 }

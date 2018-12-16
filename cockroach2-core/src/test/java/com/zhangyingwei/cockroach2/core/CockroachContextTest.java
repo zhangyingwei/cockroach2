@@ -14,8 +14,7 @@ public class CockroachContextTest {
     public static void main(String[] args) {
         CockroachConfig config = new CockroachConfig().appName("name")
                 .threadSeep(1000)
-                .store(HtmlTitleStore.class)
-                .autoClose(true);
+                .store(HtmlTitleStore.class);
         CockroachContext context = new CockroachContext(config);
         QueueHandler queueHandler = QueueHandler.initWithDefaultQueue();
         for (int i = 0; i < 100; i++) {

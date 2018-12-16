@@ -103,7 +103,7 @@ public class Task implements Comparable<Task> {
 
     @Override
     public int compareTo(Task other) {
-        int priorityCompare = this.getPriority() - other.getPriority();
+        int priorityCompare = other.getPriority() - this.getPriority();
         if (priorityCompare != 0) {
             return priorityCompare;
         }

@@ -20,7 +20,7 @@ public class QueueHandlerTest {
             handler.add(new Task("url").doWith(RequestType.POST).group("group".concat(i+"")).tryNum(100));
         }
         for (int i = 0; i < 101; i++) {
-            handler.get(false);
+            handler.get();
         }
     }
 }

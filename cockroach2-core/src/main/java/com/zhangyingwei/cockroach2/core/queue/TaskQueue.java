@@ -33,19 +33,9 @@ public class TaskQueue implements ICQueue {
         log.info("create queue with calacity: {}",calacity);
     }
 
-
     @Override
-    public Task get(Boolean withBlock) {
-        Task task = null;
-        if (withBlock) {
-            try {
-                task = this.queue.take();
-            } catch (InterruptedException e) {
-                log.info("take task faild : {}", e.getLocalizedMessage());
-            }
-        } else {
-            task = this.queue.poll();
-        }
+    public Task get() {
+        Task task = this.queue.poll();
         log.debug("take task: {}", task);
         return task;
     }
@@ -73,7 +63,10 @@ public class TaskQueue implements ICQueue {
     }
 
     //TODO
-    class TaskBlockQueue extends PriorityBlockingQueue<Task> {
-
+    class TaskPriorityBlockQueue extends PriorityBlockingQueue<Task> {
+        @Override
+        public void put(Task task) {
+            super.put(task);
+        }
     }
 }

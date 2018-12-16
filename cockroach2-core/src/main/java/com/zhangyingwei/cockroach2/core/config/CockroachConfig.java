@@ -7,6 +7,8 @@ import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.core.store.PrintStore;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
 import com.zhangyingwei.cockroach2.http.okhttp.COkHttpClient;
+import com.zhangyingwei.cockroach2.http.params.CookieGenerator;
+import com.zhangyingwei.cockroach2.http.params.HeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,15 +27,13 @@ public class CockroachConfig {
     @Getter
     private int threadSleep = 500;
     @Getter
-    private Boolean autoClose = false;
-    @Getter
     private Class<? extends ICHttpClient> httpClientClass = COkHttpClient.class;
     @Getter
     private Class<? extends IStore> storeClass = PrintStore.class;
     @Getter
-    private Class<? extends ICStringGenerator> cookieGeneratorClass;
+    private Class<? extends CookieGenerator> cookieGeneratorClass;
     @Getter
-    private Class<? extends ICMapGenerator> headerGeneratorClass;
+    private Class<? extends HeaderGenerator> headerGeneratorClass;
     @Getter
     private Class<? extends ICGenerator> proxyGeneratorClass;
 
@@ -52,11 +52,6 @@ public class CockroachConfig {
         return this;
     }
 
-    public CockroachConfig autoClose(boolean autoClose) {
-        this.autoClose = autoClose;
-        return this;
-    }
-
     public CockroachConfig httpClient(Class<? extends ICHttpClient> httpClient) {
         this.httpClientClass = httpClient;
         return this;
@@ -67,12 +62,12 @@ public class CockroachConfig {
         return this;
     }
 
-    public CockroachConfig cookidGenerator(Class<? extends ICStringGenerator> cookieGenerator) {
+    public CockroachConfig cookidGenerator(Class<? extends CookieGenerator> cookieGenerator) {
         this.cookieGeneratorClass = cookieGenerator;
         return this;
     }
 
-    public CockroachConfig headerGenerator(Class<? extends ICMapGenerator> headerGenerator) {
+    public CockroachConfig headerGenerator(Class<? extends HeaderGenerator> headerGenerator) {
         this.headerGeneratorClass = headerGenerator;
         return this;
     }
@@ -86,7 +81,6 @@ public class CockroachConfig {
         log.info("appName: {}", appName);
         log.info("numThread: {}", numThread);
         log.info("threadSleep: {}", threadSleep);
-        log.info("autoClose: {}", autoClose);
         log.info("httpClientClass: {}", httpClientClass);
         log.info("storeClass: {}", storeClass);
         log.info("cookieGeneratorClass: {}", cookieGeneratorClass);
