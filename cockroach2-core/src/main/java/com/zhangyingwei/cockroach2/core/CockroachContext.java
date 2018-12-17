@@ -8,6 +8,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * @author zhangyw
  * @date: 2018/12/12
@@ -32,7 +34,7 @@ public class CockroachContext {
             try {
                 this.executerManager.start(queue);
                 this.start = true;
-            } catch (IllegalAccessException | InstantiationException e) {
+            } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
                 log.info("start faild: {}", e.getLocalizedMessage());
                 e.printStackTrace();
             }

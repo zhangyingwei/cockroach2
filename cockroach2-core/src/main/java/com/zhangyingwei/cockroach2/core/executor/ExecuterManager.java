@@ -1,17 +1,17 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
-import com.zhangyingwei.cockroach2.common.generators.ICMapGenerator;
-import com.zhangyingwei.cockroach2.common.generators.ICStringGenerator;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
-import com.zhangyingwei.cockroach2.http.params.CookieGenerator;
-import com.zhangyingwei.cockroach2.http.params.HeaderGenerator;
+import com.zhangyingwei.cockroach2.http.params.ICookieGenerator;
+import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -35,10 +35,10 @@ public class ExecuterManager {
         this.config = config;
     }
 
-    public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException {
+    public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         int numThread = this.config.getNumThread();
-        CookieGenerator cookieGenerator = this.config.getCookieGeneratorClass() == null ? null : this.config.getCookieGeneratorClass().newInstance();
-        HeaderGenerator headerGenerator = this.config.getHeaderGeneratorClass() == null ? null : this.config.getHeaderGeneratorClass().newInstance();
+        ICookieGenerator cookieGenerator = (ICookieGenerator) this.newInstance(this.config.getCookieGeneratorClass());
+        IHeaderGenerator headerGenerator = (IHeaderGenerator) this.newInstance(this.config.getHeaderGeneratorClass());
         for (int i = 0; i < numThread; i++) {
             TaskExecotor execotor = new TaskExecotor(
                     queue,
@@ -53,9 +53,19 @@ public class ExecuterManager {
             executorList.add(execotor);
         }
         // Monitor thread
-        new Thread(new ExecutorMonitor(
-            this.service,queue,this.config,cookieGenerator,headerGenerator
-        )).start();
+        Thread monitorThread = new Thread(new ExecutorMonitor(
+            this.service,queue,this.config, cookieGenerator, headerGenerator
+        ));
+        monitorThread.setDaemon(true);
+        monitorThread.start();
+    }
+
+    private ICGenerator newInstance(Class<? extends ICGenerator> generatorClass) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        if (generatorClass != null) {
+            Constructor constructor = generatorClass.getConstructor();
+            return (ICGenerator) constructor.newInstance();
+        }
+        return null;
     }
 
     private ICGenerator<ProxyInfo> createProxy() throws IllegalAccessException, InstantiationException {
@@ -69,10 +79,10 @@ public class ExecuterManager {
         private final QueueHandler queue;
         private final CockroachConfig config;
         private final ExecutorService service;
-        private final CookieGenerator cookieGenerator;
-        private final HeaderGenerator headerGenerator;
+        private final ICookieGenerator cookieGenerator;
+        private final IHeaderGenerator headerGenerator;
         private boolean keepRun = true;
-        public ExecutorMonitor(ExecutorService service, QueueHandler queue, CockroachConfig config, CookieGenerator cookieGenerator, HeaderGenerator headerGenerator) {
+        public ExecutorMonitor(ExecutorService service, QueueHandler queue, CockroachConfig config, ICookieGenerator cookieGenerator, IHeaderGenerator headerGenerator) {
             this.service = service;
             this.queue = queue;
             this.config = config;

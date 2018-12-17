@@ -1,14 +1,12 @@
 package com.zhangyingwei.cockroach2.core.config;
 
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
-import com.zhangyingwei.cockroach2.common.generators.ICMapGenerator;
-import com.zhangyingwei.cockroach2.common.generators.ICStringGenerator;
 import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.core.store.PrintStore;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
 import com.zhangyingwei.cockroach2.http.okhttp.COkHttpClient;
-import com.zhangyingwei.cockroach2.http.params.CookieGenerator;
-import com.zhangyingwei.cockroach2.http.params.HeaderGenerator;
+import com.zhangyingwei.cockroach2.http.params.ICookieGenerator;
+import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +29,9 @@ public class CockroachConfig {
     @Getter
     private Class<? extends IStore> storeClass = PrintStore.class;
     @Getter
-    private Class<? extends CookieGenerator> cookieGeneratorClass;
+    private Class<? extends ICookieGenerator> cookieGeneratorClass;
     @Getter
-    private Class<? extends HeaderGenerator> headerGeneratorClass;
+    private Class<? extends IHeaderGenerator> headerGeneratorClass;
     @Getter
     private Class<? extends ICGenerator> proxyGeneratorClass;
 
@@ -62,12 +60,12 @@ public class CockroachConfig {
         return this;
     }
 
-    public CockroachConfig cookidGenerator(Class<? extends CookieGenerator> cookieGenerator) {
+    public CockroachConfig cookidGenerator(Class<? extends ICookieGenerator> cookieGenerator) {
         this.cookieGeneratorClass = cookieGenerator;
         return this;
     }
 
-    public CockroachConfig headerGenerator(Class<? extends HeaderGenerator> headerGenerator) {
+    public CockroachConfig headerGenerator(Class<? extends IHeaderGenerator> headerGenerator) {
         this.headerGeneratorClass = headerGenerator;
         return this;
     }
