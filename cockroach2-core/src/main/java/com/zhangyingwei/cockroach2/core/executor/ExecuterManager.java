@@ -3,9 +3,12 @@ package com.zhangyingwei.cockroach2.core.executor;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.generators.ICMapGenerator;
 import com.zhangyingwei.cockroach2.common.generators.ICStringGenerator;
+import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
+import com.zhangyingwei.cockroach2.http.params.CookieGenerator;
+import com.zhangyingwei.cockroach2.http.params.HeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,8 +37,8 @@ public class ExecuterManager {
 
     public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException {
         int numThread = this.config.getNumThread();
-        ICStringGenerator cookieGenerator = this.config.getCookieGeneratorClass() == null ? null : this.config.getCookieGeneratorClass().newInstance();
-        ICMapGenerator headerGenerator = this.config.getHeaderGeneratorClass() == null ? null : this.config.getHeaderGeneratorClass().newInstance();
+        CookieGenerator cookieGenerator = this.config.getCookieGeneratorClass() == null ? null : this.config.getCookieGeneratorClass().newInstance();
+        HeaderGenerator headerGenerator = this.config.getHeaderGeneratorClass() == null ? null : this.config.getHeaderGeneratorClass().newInstance();
         for (int i = 0; i < numThread; i++) {
             TaskExecotor execotor = new TaskExecotor(
                     queue,
@@ -50,9 +53,38 @@ public class ExecuterManager {
             executorList.add(execotor);
         }
         // Monitor thread
-        new Thread(() -> {
-            Thread.currentThread().setName("TEMointor");
-            while (true) {
+        new Thread(new ExecutorMonitor(
+            this.service,queue,this.config,cookieGenerator,headerGenerator
+        )).start();
+    }
+
+    private ICGenerator<ProxyInfo> createProxy() throws IllegalAccessException, InstantiationException {
+        if (this.config.getProxyGeneratorClass() != null) {
+            return this.config.getProxyGeneratorClass().newInstance();
+        }
+        return null;
+    }
+
+    class ExecutorMonitor implements Runnable {
+        private final QueueHandler queue;
+        private final CockroachConfig config;
+        private final ExecutorService service;
+        private final CookieGenerator cookieGenerator;
+        private final HeaderGenerator headerGenerator;
+        private boolean keepRun = true;
+        public ExecutorMonitor(ExecutorService service, QueueHandler queue, CockroachConfig config, CookieGenerator cookieGenerator, HeaderGenerator headerGenerator) {
+            this.service = service;
+            this.queue = queue;
+            this.config = config;
+            this.cookieGenerator = cookieGenerator;
+            this.headerGenerator = headerGenerator;
+        }
+
+        @Override
+        public void run() {
+            Thread.currentThread().setName("emonitor-".concat(IdUtils.getId("EMonitor")+""));
+            int numThread = this.config.getNumThread();
+            while (keepRun) {
                 try {
                     TimeUnit.SECONDS.sleep(10);
                     ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) this.service;
@@ -70,16 +102,19 @@ public class ExecuterManager {
                                 completedTaskCount,
                                 taskCount
                         );
-                        this.service.execute(new TmpTaskExecotor(
-                                queue,
-                                new CockroachHttpClient(
-                                        this.config.getHttpClientClass().newInstance(), cookieGenerator, headerGenerator
-                                ),
-                                this.createProxy(),
-                                this.config.getStoreClass().newInstance(),
-                                this.config.getThreadSleep()
-                        ));
-                        log.info("submit one tmpexecutor!");
+                        if (queue.size() > 0) {
+                            int tmpNumTherad = numThread / 2;
+                            this.service.execute(new TmpTaskExecotor(
+                                    queue,
+                                    new CockroachHttpClient(
+                                            this.config.getHttpClientClass().newInstance(), cookieGenerator, headerGenerator
+                                    ),
+                                    createProxy(),
+                                    this.config.getStoreClass().newInstance(),
+                                    this.config.getThreadSleep()
+                            ));
+                            log.info("submit one tmp executor!");
+                        }
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -89,14 +124,7 @@ public class ExecuterManager {
                     e.printStackTrace();
                 }
             }
-        }).start();
-    }
-
-    private ICGenerator<ProxyInfo> createProxy() throws IllegalAccessException, InstantiationException {
-        if (this.config.getProxyGeneratorClass() != null) {
-            return this.config.getProxyGeneratorClass().newInstance();
         }
-        return null;
     }
 
 }

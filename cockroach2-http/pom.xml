@@ -5,7 +5,8 @@
     <parent>
         <artifactId>cockroach2</artifactId>
         <groupId>com.zhangyingwei.cockroach</groupId>
-        <version>0.0.1</version>
+        <version>${cockroach2.version}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

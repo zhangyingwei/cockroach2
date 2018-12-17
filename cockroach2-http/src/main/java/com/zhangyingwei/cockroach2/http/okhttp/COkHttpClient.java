@@ -51,7 +51,7 @@ public class COkHttpClient implements ICHttpClient {
         }
         CockroachResponseContent content = null;
         ResponseHeaders header = null;
-        Integer code = null;
+        Integer code = 500;
         Boolean success = false;
         if (response != null) {
             try {

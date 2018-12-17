@@ -52,7 +52,7 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
                         proxyInfo = proxy.generate(task);
                     }
                     CockroachResponse response = this.client.proxy(proxyInfo).execute(request);
-                    if (response != null) {
+                    if (response != null && response.isSuccess()) {
                         response.setQueue(this.queue);
                         this.store.store(response);
                         response.close();

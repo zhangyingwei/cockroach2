@@ -17,7 +17,7 @@ public class TaskQueueTest {
         }
         while (!queue.isEmpty()) {
             queue.get();
-            queue.add(this.createTask(100));
+//            queue.add(this.createTask(100));
         }
     }
 
