@@ -104,16 +104,21 @@ public class ExecuterManager {
                         );
                         if (queue.size() > 0) {
                             int tmpNumTherad = numThread / 2;
-                            this.service.execute(new TmpTaskExecotor(
-                                    queue,
-                                    new CockroachHttpClient(
-                                            this.config.getHttpClientClass().newInstance(), cookieGenerator, headerGenerator
-                                    ),
-                                    createProxy(),
-                                    this.config.getStoreClass().newInstance(),
-                                    this.config.getThreadSleep()
-                            ));
-                            log.info("submit one tmp executor!");
+                            if (tmpNumTherad < 1) {
+                                tmpNumTherad = 1;
+                            }
+                            for (int i = 0; i < tmpNumTherad; i++) {
+                                this.service.execute(new TmpTaskExecotor(
+                                        queue,
+                                        new CockroachHttpClient(
+                                                this.config.getHttpClientClass().newInstance(), cookieGenerator, headerGenerator
+                                        ),
+                                        createProxy(),
+                                        this.config.getStoreClass().newInstance(),
+                                        this.config.getThreadSleep()
+                                ));
+                            }
+                            log.info("submit {} tmp executor!", tmpNumTherad);
                         }
                     }
                 } catch (InterruptedException e) {
