@@ -5,11 +5,16 @@ import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.core.store.PrintStore;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
 import com.zhangyingwei.cockroach2.http.okhttp.COkHttpClient;
+import com.zhangyingwei.cockroach2.http.params.DefaultHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.params.ICookieGenerator;
 import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author zhangyw
@@ -91,7 +96,7 @@ public class CockroachConfig {
         return null;
     }
 
-    public IHeaderGenerator newHeaderGenerator() throws IllegalAccessException, InstantiationException {
+    private IHeaderGenerator newHeaderGenerator() throws IllegalAccessException, InstantiationException {
         if (this.headerGeneratorClass != null) {
             return this.headerGeneratorClass.newInstance();
         }
@@ -114,5 +119,12 @@ public class CockroachConfig {
         log.info("cookieGeneratorClass: {}", cookieGeneratorClass);
         log.info("headerGeneratorClass: {}", headerGeneratorClass);
         log.info("proxyGeneratorClass: {}", proxyGeneratorClass);
+    }
+
+    public List<IHeaderGenerator> newHeaderGenerators() throws InstantiationException, IllegalAccessException {
+        List<IHeaderGenerator> headerGenerators = new ArrayList<>();
+        headerGenerators.add(this.newHeaderGenerator());
+        headerGenerators.add(new DefaultHeaderGenerator());
+        return headerGenerators.stream().filter(item -> item!=null).collect(Collectors.toList());
     }
 }

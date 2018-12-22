@@ -4,12 +4,16 @@ import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.common.generators.ICMapGenerator;
 import com.zhangyingwei.cockroach2.common.generators.ICStringGenerator;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
+import com.zhangyingwei.cockroach2.http.params.ICookieGenerator;
+import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 /**
  * @author zhangyw
@@ -21,13 +25,13 @@ import lombok.extern.slf4j.Slf4j;
 public class CockroachHttpClient implements ICHttpClient {
     @NonNull
     private ICHttpClient client;
-    private ICStringGenerator cookieGenerator;
-    private ICMapGenerator headerGenerator;
+    private ICookieGenerator cookieGenerator;
+    private List<IHeaderGenerator> headerGenerators;
 
-    public CockroachHttpClient(@NonNull ICHttpClient client, ICStringGenerator cookieGenerator, ICMapGenerator headerGenerator) {
+    public CockroachHttpClient(@NonNull ICHttpClient client, ICookieGenerator cookieGenerator, List<IHeaderGenerator> headerGenerators) {
         this.client = client;
         this.cookieGenerator = cookieGenerator;
-        this.headerGenerator = headerGenerator;
+        this.headerGenerators = headerGenerators;
     }
 
     @Override
@@ -35,11 +39,14 @@ public class CockroachHttpClient implements ICHttpClient {
         if (this.cookieGenerator != null) {
             request.getHeader().setCookie(this.cookieGenerator.generate(request.getTask()));
         }
-        if (this.headerGenerator != null) {
-            request.getHeader().setHeaders(this.headerGenerator.generate(request.getTask()));
+        if (this.headerGenerators!=null && this.headerGenerators.size() > 0) {
+            this.headerGenerators.forEach(headerGenerator -> {
+                request.getHeader().setHeaders(headerGenerator.generate(request.getTask()));
+            });
         }
         log.debug("http execute with header: {} ",request.getHeader().getHeaders());
         CockroachResponse response = this.client.execute(request);
+        log.debug("{} : {}", request.getRequestType(), request.getUrl());
         if (response != null) {
             response.setTask(request.getTask());
         }

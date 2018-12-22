@@ -91,7 +91,7 @@ public class ExecutorMonitor implements Runnable {
                     this.service.execute(new TmpTaskExecotor(
                             queue,
                             new CockroachHttpClient(
-                                    this.config.newHttpClient(), this.config.newCookieGenerator(), this.config.newHeaderGenerator()
+                                    this.config.newHttpClient(), this.config.newCookieGenerator(), this.config.newHeaderGenerators()
                             ),
                             this.config.newProxyGenerator(),
                             this.config.newStore(),

@@ -8,12 +8,10 @@ public class TaskExecuteListener implements ICListener<Task> {
     //task start time
     private Long startTime = 0L;
 
-    @Override
     public void before(Task task) {
         startTime = System.currentTimeMillis();
     }
 
-    @Override
     public void after(Task task) {
         Long endTime = System.currentTimeMillis();
         log.info("task statu: {}",task.getStatu());

@@ -30,9 +30,9 @@ public class CockroachRequest {
             String paramsContent = this.task.getParams().entrySet().stream()
                     .map(entity -> entity.getKey().concat("=").concat(entity.getValue()))
                     .reduce((left, right) -> left.concat("&").concat(right)).orElse("");
-            return this.task.getUrl().concat(paramsContent);
+            return this.task.getUrl().concat("?").concat(paramsContent);
         }else {
-            return this.getUrl();
+            return this.task.getUrl();
         }
     }
 
