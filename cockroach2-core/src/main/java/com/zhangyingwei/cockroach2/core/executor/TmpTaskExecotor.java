@@ -6,6 +6,7 @@ import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
+import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
@@ -22,8 +23,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class TmpTaskExecotor extends TaskExecotor{
-    public TmpTaskExecotor(QueueHandler queue, CockroachHttpClient client, ICGenerator<ProxyInfo> proxy, IStore store, int threadSleep) {
-        super(queue, client, proxy, store, threadSleep);
+    public TmpTaskExecotor(QueueHandler queue, CockroachHttpClient client, ICGenerator<ProxyInfo> proxy, IStore store, int threadSleep, TaskExecuteListener taskExecuteListener) {
+        super(queue, client, proxy, store, threadSleep,taskExecuteListener);
     }
 
     @Override

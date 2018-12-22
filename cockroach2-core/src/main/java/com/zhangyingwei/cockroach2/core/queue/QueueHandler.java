@@ -2,6 +2,7 @@ package com.zhangyingwei.cockroach2.core.queue;
 
 import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.Task;
+import com.zhangyingwei.cockroach2.common.enmus.TaskStatu;
 import com.zhangyingwei.cockroach2.core.queue.filter.ICQueueFilter;
 import com.zhangyingwei.cockroach2.queue.ICQueue;
 import lombok.extern.slf4j.Slf4j;
@@ -72,7 +73,7 @@ public class QueueHandler implements ICQueue {
             } else {
                 return task;
             }
-            return task.tryOne();
+            return task.statu(TaskStatu.START).tryOne();
         } catch (InterruptedException e) {
             log.error("get task from queue error: {}", e.getLocalizedMessage());
         } finally {

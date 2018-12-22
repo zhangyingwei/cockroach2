@@ -2,10 +2,13 @@ package com.zhangyingwei.cockroach2.core.executor;
 
 
 import com.zhangyingwei.cockroach2.common.Task;
+import com.zhangyingwei.cockroach2.common.enmus.TaskStatu;
 import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
+import com.zhangyingwei.cockroach2.core.listener.ICListener;
+import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
@@ -23,21 +26,30 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class TaskExecotor implements ICTaskExecutor,Runnable {
+    private final TaskExecuteListener taskExecuteListener;
     private String name = "exetucor-" + IdUtils.getId("TaskExecotor");
     private Boolean keepRun = true;
     protected QueueHandler queue;
-    private CockroachHttpClient client;
-    private ICGenerator<ProxyInfo> proxy;
-    private IStore store;
-    private int threadSleep;
+    private final CockroachHttpClient client;
+    private final ICGenerator<ProxyInfo> proxy;
+    private final IStore store;
+    private final int threadSleep;
     private Thread currentThread = null;
 
-    public TaskExecotor(QueueHandler queue, CockroachHttpClient client, ICGenerator<ProxyInfo> proxy, IStore store, int threadSleep) {
+    public TaskExecotor(
+            QueueHandler queue,
+            CockroachHttpClient client,
+            ICGenerator<ProxyInfo> proxy,
+            IStore store,
+            int threadSleep,
+            TaskExecuteListener taskExecuteListener
+    ) {
         this.queue = queue;
         this.proxy = proxy;
         this.client = client;
         this.store = store;
         this.threadSleep = threadSleep;
+        this.taskExecuteListener = taskExecuteListener;
     }
 
     @Override
@@ -45,8 +57,10 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
         Task task = this.queue.get();
         try {
             if (task != null) {
-                if (this.validTask(task)) {
-                    CockroachRequest request = new CockroachRequest(task);
+                //listener
+                this.taskExecuteListener.before(task);
+                if (this.validTask(task.statu(TaskStatu.VALID))) {
+                    CockroachRequest request = new CockroachRequest(task.statu(TaskStatu.EXECUTE));
                     ProxyInfo proxyInfo = null;
                     if (proxy != null) {
                         proxyInfo = proxy.generate(task);
@@ -54,10 +68,14 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
                     CockroachResponse response = this.client.proxy(proxyInfo).execute(request);
                     if (response != null && response.isSuccess()) {
                         response.setQueue(this.queue);
+                        task.statu(TaskStatu.STORE);
                         this.store.store(response);
                         response.close();
+                        task.statu(TaskStatu.FINISH);
                     }
                 }
+                //listener
+                this.taskExecuteListener.after(task);
             } else {
                 log.debug("take task null");
             }
@@ -99,5 +117,9 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
 
     public Thread.State getStatus() {
         return this.currentThread.getState();
+    }
+
+    public boolean isTaskTimeOut() {
+        return false;
     }
 }

@@ -24,15 +24,10 @@ public class CockroachConfig {
     private int numThread = 1;
     @Getter
     private int threadSleep = 500;
-    @Getter
     private Class<? extends ICHttpClient> httpClientClass = COkHttpClient.class;
-    @Getter
     private Class<? extends IStore> storeClass = PrintStore.class;
-    @Getter
     private Class<? extends ICookieGenerator> cookieGeneratorClass;
-    @Getter
     private Class<? extends IHeaderGenerator> headerGeneratorClass;
-    @Getter
     private Class<? extends ICGenerator> proxyGeneratorClass;
 
     public CockroachConfig appName(String appName) {
@@ -73,6 +68,41 @@ public class CockroachConfig {
     public CockroachConfig proxyGenerator(Class<? extends ICGenerator<ProxyInfo>> proxyGenerator) {
         this.proxyGeneratorClass = proxyGenerator;
         return this;
+    }
+
+    public ICHttpClient newHttpClient() throws IllegalAccessException, InstantiationException {
+        if (this.httpClientClass != null) {
+            return httpClientClass.newInstance();
+        }
+        return null;
+    }
+
+    public IStore newStore() throws IllegalAccessException, InstantiationException {
+        if (this.storeClass != null) {
+            return this.storeClass.newInstance();
+        }
+        return null;
+    }
+
+    public ICookieGenerator newCookieGenerator() throws IllegalAccessException, InstantiationException {
+        if (this.cookieGeneratorClass != null) {
+            return this.cookieGeneratorClass.newInstance();
+        }
+        return null;
+    }
+
+    public IHeaderGenerator newHeaderGenerator() throws IllegalAccessException, InstantiationException {
+        if (this.headerGeneratorClass != null) {
+            return this.headerGeneratorClass.newInstance();
+        }
+        return null;
+    }
+
+    public ICGenerator newProxyGenerator() throws IllegalAccessException, InstantiationException {
+        if (this.proxyGeneratorClass != null) {
+            return this.proxyGeneratorClass.newInstance();
+        }
+        return null;
     }
 
     public void print() {

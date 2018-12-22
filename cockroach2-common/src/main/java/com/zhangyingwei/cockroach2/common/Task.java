@@ -1,6 +1,7 @@
 package com.zhangyingwei.cockroach2.common;
 
 import com.zhangyingwei.cockroach2.common.enmus.RequestType;
+import com.zhangyingwei.cockroach2.common.enmus.TaskStatu;
 import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import lombok.EqualsAndHashCode;
@@ -20,6 +21,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @Slf4j
 public class Task implements Comparable<Task> {
+    @Getter
     private Long id = IdUtils.getId(Task.class.getName());
     @Setter @Getter
     private String group = Constants.TASK_GROUP_DEFAULT;
@@ -32,6 +34,8 @@ public class Task implements Comparable<Task> {
     private Object data;
     @Getter
     private RequestType requestType = RequestType.GET;
+    @Getter
+    private TaskStatu statu = TaskStatu.CREATE;
 
 
     /**
@@ -64,6 +68,11 @@ public class Task implements Comparable<Task> {
 
     public Task tryNum(Integer num) {
         this.tryNum = num;
+        return this;
+    }
+
+    public Task statu(TaskStatu statu) {
+        this.statu = statu;
         return this;
     }
 
