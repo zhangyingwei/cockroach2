@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/bulma.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <title>Cockroach2 Moniter - Executor</title>
+</head>
+<body>
+    <div>
+        <nav class="navbar" role="navigation" aria-label="main navigation">
+            <div class="navbar-brand">
+              <a class="navbar-item" href="#">
+                <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+              </a>
+            </div>
+          
+            <div id="navbarBasicExample" class="navbar-menu">
+              <div class="navbar-start">
+                <a class="navbar-item" href="index.html">Home</a>
+                <a class="navbar-item" href="queue.html">Queue</a>
+                <a class="navbar-item is-active" href="task.html">Task</a>
+                <a class="navbar-item" href="executor.html">Executor</a>
+              </div>
+            </div>
+          </nav>
+    </div>
+    <div class="container is-fluid">
+        <div class="panel">
+                <nav class="level notification page-content">
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">executor count</p>
+                            <p class="title">3456</p>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">block count</p>
+                            <p class="title">132</p>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">active count</p>
+                            <p class="title">132</p>
+                        </div>
+                    </div>
+                    <div class="level-item has-text-centered">
+                        <div>
+                            <p class="heading">finish count</p>
+                            <p class="title">1</p>
+                        </div>
+                    </div>
+                </nav>
+        </div>
+
+        <div class="columns">
+            <div class="column">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                      <article class="tile is-child notification is-primary">
+                        <p class="title is-3">Executor 执行详情</p>
+                        <p class="content">
+                            <ul>
+                                <li>
+                                    <div class="columns">
+                                        <div class="column is-1">executor-1</div>
+                                        <div class="column is-11"><progress class="progress is-info" value="45" max="1000"></progress></div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="columns">
+                                        <div class="column is-1">executor-2</div>
+                                        <div class="column is-11"><progress class="progress is-info" value="45" max="1000"></progress></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </p>
+                      </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
