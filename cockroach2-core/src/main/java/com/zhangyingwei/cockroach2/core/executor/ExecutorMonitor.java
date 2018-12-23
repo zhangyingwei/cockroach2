@@ -1,5 +1,6 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
+import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
@@ -18,12 +19,12 @@ public class ExecutorMonitor implements Runnable {
     private final CockroachConfig config;
     private final ExecutorService service;
     private boolean keepRun = true;
-    private List<TaskExecotor> executorList;
+    private List<TaskExecutor> executorList;
 
     public ExecutorMonitor(ExecutorService service,
                            QueueHandler queue,
                            CockroachConfig config,
-                           List<TaskExecotor> executorList) {
+                           List<TaskExecutor> executorList) {
         this.service = service;
         this.queue = queue;
         this.config = config;
@@ -88,7 +89,7 @@ public class ExecutorMonitor implements Runnable {
                     tmpNumTherad = 1;
                 }
                 for (int i = 0; i < tmpNumTherad; i++) {
-                    this.service.execute(new TmpTaskExecotor(
+                    this.service.execute(new TmpTaskExecutor(
                             queue,
                             new CockroachHttpClient(
                                     this.config.newHttpClient(), this.config.newCookieGenerator(), this.config.newHeaderGenerators()
@@ -100,6 +101,11 @@ public class ExecutorMonitor implements Runnable {
                     ));
                 }
                 log.info("submit {} tmp executor!", tmpNumTherad);
+            }else {
+                if (!queue.getWithBlock()) {
+                    service.shutdown();
+                    AsyncUtils.shutdown();
+                }
             }
         }
     }

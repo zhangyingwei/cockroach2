@@ -1,8 +1,9 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
+import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.stream.Stream;
 
 @Slf4j
 public class TaskExecotorTest {
@@ -29,7 +30,24 @@ public class TaskExecotorTest {
         }).start();
     }
 
-    public static void main(String[] args) {
-        new TaskExecotorTest().stop();
+    public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException {
+//        new TaskExecotorTest().stop();
+//        new TaskExecotorTest().execute();
+        new TaskExecotorTest().feature();
+    }
+
+    public void execute() {
+        Stream.generate(Math::random).limit(100000).parallel().forEach(num -> {
+            System.out.println(num+" : "+System.currentTimeMillis());
+        });
+        System.out.println("after stream");
+    }
+
+    public void feature() {
+        AsyncUtils.doVoidMethodAsync(() -> {
+            System.out.println("");
+        });
+        System.out.println("after method");
+        AsyncUtils.shutdown();
     }
 }

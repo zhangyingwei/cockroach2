@@ -5,18 +5,16 @@ import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.common.enmus.TaskStatu;
 import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
+import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
-import com.zhangyingwei.cockroach2.core.listener.ICListener;
 import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,7 +23,7 @@ import java.util.concurrent.TimeUnit;
  * @desc:
  */
 @Slf4j
-public class TaskExecotor implements ICTaskExecutor,Runnable {
+public class TaskExecutor implements ICTaskExecutor,Runnable {
     private final TaskExecuteListener taskExecuteListener;
     private String name = "exetucor-" + IdUtils.getId("TaskExecotor");
     private Boolean keepRun = true;
@@ -36,7 +34,7 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
     private final int threadSleep;
     private Thread currentThread = null;
 
-    public TaskExecotor(
+    public TaskExecutor(
             QueueHandler queue,
             CockroachHttpClient client,
             ICGenerator<ProxyInfo> proxy,
@@ -50,6 +48,13 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
         this.store = store;
         this.threadSleep = threadSleep;
         this.taskExecuteListener = taskExecuteListener;
+        taskExecuteListener.start(
+                this.name,
+                this.client.getClient() == null? null:this.client.getClient().getClass(),
+                this.proxy == null?null:this.proxy.getClass(),
+                this.store == null?null:this.store.getClass(),
+                threadSleep
+        );
     }
 
     @Override
@@ -58,28 +63,32 @@ public class TaskExecotor implements ICTaskExecutor,Runnable {
         try {
             if (task != null) {
                 //listener
-                this.taskExecuteListener.before(task);
+                AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.before(task));
                 if (this.validTask(task.statu(TaskStatu.VALID))) {
                     CockroachRequest request = new CockroachRequest(task.statu(TaskStatu.EXECUTE));
                     ProxyInfo proxyInfo = null;
                     if (proxy != null) {
                         proxyInfo = proxy.generate(task);
                     }
+                    AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.execute(task));
                     CockroachResponse response = this.client.proxy(proxyInfo).execute(request);
                     if (response != null && response.isSuccess()) {
                         response.setQueue(this.queue);
                         task.statu(TaskStatu.STORE);
+                        AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.store(task));
                         this.store.store(response);
                         response.close();
                         task.statu(TaskStatu.FINISH);
+                        AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.success(task));
                     }
                 }
                 //listener
-                this.taskExecuteListener.after(task);
+                AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.after(task));
             } else {
                 log.debug("take task null");
             }
         } catch (TaskExecuteException e) {
+            AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.failed(task));
             log.info("execure error with task {}: {}", task, e.getLocalizedMessage());
             if (task.needRetry()) {
                 this.queue.add(task);

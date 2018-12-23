@@ -22,8 +22,8 @@ import java.util.concurrent.TimeUnit;
  * @desc:
  */
 @Slf4j
-public class TmpTaskExecotor extends TaskExecotor{
-    public TmpTaskExecotor(QueueHandler queue, CockroachHttpClient client, ICGenerator<ProxyInfo> proxy, IStore store, int threadSleep, TaskExecuteListener taskExecuteListener) {
+public class TmpTaskExecutor extends TaskExecutor{
+    public TmpTaskExecutor(QueueHandler queue, CockroachHttpClient client, ICGenerator<ProxyInfo> proxy, IStore store, int threadSleep, TaskExecuteListener taskExecuteListener) {
         super(queue, client, proxy, store, threadSleep,taskExecuteListener);
     }
 

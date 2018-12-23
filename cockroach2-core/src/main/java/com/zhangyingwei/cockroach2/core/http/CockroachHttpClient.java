@@ -9,6 +9,7 @@ import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ import java.util.List;
 
 @Slf4j
 public class CockroachHttpClient implements ICHttpClient {
-    @NonNull
+    @NonNull@Getter
     private ICHttpClient client;
     private ICookieGenerator cookieGenerator;
     private List<IHeaderGenerator> headerGenerators;

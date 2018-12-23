@@ -6,12 +6,10 @@
         <artifactId>cockroach2</artifactId>
         <groupId>com.zhangyingwei.cockroach</groupId>
         <version>${cockroach2.version}</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>cockroach2-core</artifactId>
-
+    <artifactId>cockroach2-monitor</artifactId>
 
     <dependencies>
         <dependency>
@@ -19,21 +17,7 @@
             <artifactId>cockroach2-common</artifactId>
             <version>${cockroach2.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.zhangyingwei.cockroach</groupId>
-            <artifactId>cockroach2-queue</artifactId>
-            <version>${cockroach2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.zhangyingwei.cockroach</groupId>
-            <artifactId>cockroach2-http</artifactId>
-            <version>${cockroach2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.zhangyingwei.cockroach</groupId>
-            <artifactId>cockroach2-monitor</artifactId>
-            <version>${cockroach2.version}</version>
-        </dependency>
     </dependencies>
+
 
 </project>

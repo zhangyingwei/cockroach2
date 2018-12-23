@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadFactory;
 public class ExecuterManager {
     private CockroachConfig config;
     private ExecutorService service = Executors.newCachedThreadPool();
-    private List<TaskExecotor> executorList = new ArrayList<>();
+    private List<TaskExecutor> executorList = new ArrayList<>();
 
     public ExecuterManager(CockroachConfig config) {
         this.config = config;
@@ -33,7 +33,7 @@ public class ExecuterManager {
     public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
         int numThread = this.config.getNumThread();
         for (int i = 0; i < numThread; i++) {
-            TaskExecotor execotor = new TaskExecotor(
+            TaskExecutor execotor = new TaskExecutor(
                     queue,
                     new CockroachHttpClient(
                             this.config.newHttpClient(),

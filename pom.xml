@@ -21,6 +21,7 @@
         <module>cockroach2-queue</module>
         <module>cockroach2-http</module>
         <module>cockroach2-session</module>
+        <module>cockroach2-monitor</module>
     </modules>
 
     <dependencies>

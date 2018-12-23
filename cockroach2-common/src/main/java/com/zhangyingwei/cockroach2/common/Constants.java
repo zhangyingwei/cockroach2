@@ -11,4 +11,8 @@ public class Constants {
     public static final Integer TASK_PRIORITY = 0;
     public static final int QUEUE_SIZE = 1024;
     public static final Boolean QUEUE_BLOCK = false;
+    /**
+     * 异步方法调用，线程池大小
+     */
+    public static final int ASYN_METHOD_THREAD_NUM = 100;
 }
