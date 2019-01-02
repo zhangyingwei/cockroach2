@@ -16,7 +16,7 @@ public class Applicatoin {
         CockroachConfig config = new CockroachConfig()
                 .appName("示说网爬虫")
                 .threadSeep(500)
-                .numThread(20)
+                .numThread(50)
                 .store(MainStore.class);
         CockroachContext context = new CockroachContext(config);
         context.start(getQueue());
