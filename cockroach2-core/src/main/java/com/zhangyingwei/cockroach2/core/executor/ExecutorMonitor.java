@@ -1,5 +1,6 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
+import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
@@ -33,11 +34,11 @@ public class ExecutorMonitor implements Runnable {
 
     @Override
     public void run() {
-        Thread.currentThread().setName("emonitor-".concat(IdUtils.getId("EMonitor")+""));
+        Thread.currentThread().setName(Constants.THREAD_NAME_MOINTOR.concat(IdUtils.getId("EMonitor")+""));
         int numThread = this.config.getNumThread();
         while (keepRun) {
             try {
-                TimeUnit.SECONDS.sleep(10);
+                TimeUnit.SECONDS.sleep(5);
                 this.executorStatusMonitor(numThread);
                 this.executorTaskMonitor();
             } catch (InterruptedException e) {
@@ -62,7 +63,7 @@ public class ExecutorMonitor implements Runnable {
     }
 
     /**
-     * 监控是否所有线程均
+     * 监控是否所有线程均被阻塞
      * @param numThread
      * @throws IllegalAccessException
      * @throws InstantiationException
@@ -76,7 +77,7 @@ public class ExecutorMonitor implements Runnable {
         int runnableExecutor = this.executorList.stream().map(executor -> executor.getStatus()).filter(state -> Thread.State.RUNNABLE.equals(state)).collect(Collectors.toList()).size();
         if (runnableExecutor == 0) {
             log.info(
-                    "queue size: {}, wait size:{},active size:{},completed size:{},task count:{}",
+                    "queue({})\twait({})\tactive({})\tcompleted({})\ttask({})",
                     queue.size(),
                     queueSize,
                     activeCount,

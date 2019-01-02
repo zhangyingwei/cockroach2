@@ -22,4 +22,17 @@ public class CockroachContextTest {
         }
         context.start(queueHandler);
     }
+
+    @Test
+    public void test() {
+        CockroachConfig config = new CockroachConfig().appName("name")
+                .threadSeep(1000)
+                .store(HtmlTitleStore.class);
+        CockroachContext context = new CockroachContext(config);
+        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue().withBlock(true);
+        for (int i = 0; i < 10; i++) {
+            queueHandler.add(new Task("http://zhangyingwei.com"));
+        }
+        context.start(queueHandler);
+    }
 }

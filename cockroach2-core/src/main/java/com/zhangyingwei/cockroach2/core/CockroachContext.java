@@ -1,5 +1,6 @@
 package com.zhangyingwei.cockroach2.core;
 
+import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.executor.ExecuterManager;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
@@ -25,6 +26,7 @@ public class CockroachContext {
     public CockroachContext(CockroachConfig config) {
         this.executerManager = new ExecuterManager(config);
         this.config = config;
+        Thread.currentThread().setName(Constants.THREAD_NAME_MAIN);
     }
 
     public void start(QueueHandler queue) {
@@ -34,11 +36,11 @@ public class CockroachContext {
             try {
                 this.executerManager.start(queue);
                 this.start = true;
-            } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+            } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException|InterruptedException e) {
                 log.info("start faild: {}", e.getLocalizedMessage());
                 e.printStackTrace();
             }
-            log.info("start success");
+//            log.info("start success");
         } else {
             log.warn("cockroach had already bean started");
         }

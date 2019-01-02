@@ -15,15 +15,15 @@ public class Applicatoin {
     public static void main(String[] args) {
         CockroachConfig config = new CockroachConfig()
                 .appName("示说网爬虫")
-                .threadSeep(2000)
-                .numThread(2)
+                .threadSeep(500)
+                .numThread(20)
                 .store(MainStore.class);
         CockroachContext context = new CockroachContext(config);
         context.start(getQueue());
     }
 
     private static QueueHandler getQueue() {
-        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue(10000).withBlock(true).limit(100L);
+        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue(10000).withBlock(false).limit(100L);
         queueHandler.withFilter(task -> task.getUrl() != null && !task.getUrl().equals("https://www.slidestalk.com"));
         queueHandler.add(new Task("https://www.slidestalk.com/categories/1","ss"));
         return queueHandler;

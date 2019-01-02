@@ -95,4 +95,10 @@ public class StorageClient {
     public TaskModel deleteTaskById(Long id) {
         return this.taskModels.remove(id);
     }
+
+    public void print() {
+        System.out.println(this.executorModels);
+        System.out.println(this.queueModel);
+        System.out.println(this.taskModels);
+    }
 }

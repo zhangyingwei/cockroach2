@@ -65,4 +65,8 @@ public class StorageHandler {
         newTaskModel.setStartTimestamp(taskModel.getStartTimestamp());
         storageClient.addTask(newTaskModel);
     }
+
+    public static void print() {
+        storageClient.print();
+    }
 }
