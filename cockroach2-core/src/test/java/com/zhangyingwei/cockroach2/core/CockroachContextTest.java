@@ -16,8 +16,8 @@ public class CockroachContextTest {
                 .threadSeep(1000)
                 .store(HtmlTitleStore.class);
         CockroachContext context = new CockroachContext(config);
-        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue();
-        for (int i = 0; i < 100; i++) {
+        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue().withBlock(false);
+        for (int i = 0; i < 10; i++) {
             queueHandler.add(new Task("http://zhangyingwei.com"));
         }
         context.start(queueHandler);

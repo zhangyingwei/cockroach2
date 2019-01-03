@@ -2,7 +2,6 @@ package com.zhangyingwei.cockroach2.monitor.model;
 
 import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.common.enmus.RequestType;
-import com.zhangyingwei.cockroach2.common.enmus.TaskStatu;
 import lombok.Data;
 import java.util.Map;
 
@@ -17,7 +16,7 @@ public class TaskModel implements Comparable<TaskModel> {
     private Map<String, String> params;
     private Object data;
     private RequestType requestType;
-    private TaskStatu statu;
+    private Task.Statu statu;
     private Integer priority;
     private Long startTimestamp;
 

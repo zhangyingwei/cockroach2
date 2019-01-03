@@ -2,6 +2,7 @@ package com.zhangyingwei.cockroach2.monitor.storage;
 
 import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.monitor.model.ExecutorModel;
+import com.zhangyingwei.cockroach2.monitor.model.QueueModel;
 import com.zhangyingwei.cockroach2.monitor.model.TaskModel;
 
 import java.util.List;
@@ -64,6 +65,10 @@ public class StorageHandler {
         TaskModel newTaskModel = new TaskModel(task);
         newTaskModel.setStartTimestamp(taskModel.getStartTimestamp());
         storageClient.addTask(newTaskModel);
+    }
+
+    public synchronized static QueueModel getQueryModel() {
+        return storageClient.getQueueModel();
     }
 
     public static void print() {

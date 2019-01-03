@@ -35,14 +35,14 @@ public class TaskExecuteListener implements ICListener<Task> {
     }
 
     public void success(Task task) {
-        StorageHandler.deleteTaskById(task.getId());
+        StorageHandler.updateTask(task);
     }
 
     public void failed(Task task) {
-        StorageHandler.deleteTaskById(task.getId());
+        StorageHandler.updateTask(task);
     }
 
     public void stop(String name) {
-        StorageHandler.deleteExecutorByName(name);
+//        StorageHandler.deleteExecutorByName(name);
     }
 }

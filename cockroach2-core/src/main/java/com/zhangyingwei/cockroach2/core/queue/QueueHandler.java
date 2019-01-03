@@ -3,7 +3,6 @@ package com.zhangyingwei.cockroach2.core.queue;
 import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
-import com.zhangyingwei.cockroach2.common.enmus.TaskStatu;
 import com.zhangyingwei.cockroach2.core.listener.QueueListener;
 import com.zhangyingwei.cockroach2.core.queue.filter.ICQueueFilter;
 import com.zhangyingwei.cockroach2.queue.ICQueue;
@@ -69,7 +68,7 @@ public class QueueHandler implements ICQueue {
             this.lock.lock();
             Task task = queue.get();
             if (task != null) {
-                task.statu(TaskStatu.START).tryOne();
+                task.statu(Task.Statu.START).tryOne();
             }
             this.condition.signalAll();
             if (this.withBlock) {

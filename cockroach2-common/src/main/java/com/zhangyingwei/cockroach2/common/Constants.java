@@ -16,8 +16,8 @@ public class Constants {
      */
     public static final int ASYN_METHOD_THREAD_NUM = 100;
 
-    public static final String THREAD_NAME_EXECUTER = "(..)nnn-";
-    public static final String THREAD_NAME_MOINTOR = "U•ェ•*U-";
-    public static final String THREAD_NAME_EXECUTER_TMP = "(..)nnn@tmp-";
-    public static final String THREAD_NAME_MAIN = "(°°)～";
+    public static final String THREAD_NAME_EXECUTER = "Executor-";
+    public static final String THREAD_NAME_MOINTOR = "Monitor-";
+    public static final String THREAD_NAME_EXECUTER_TMP = "Executor@tmp-";
+    public static final String THREAD_NAME_MAIN = "Main";
 }

@@ -1,7 +1,6 @@
 package com.zhangyingwei.cockroach2.common;
 
 import com.zhangyingwei.cockroach2.common.enmus.RequestType;
-import com.zhangyingwei.cockroach2.common.enmus.TaskStatu;
 import com.zhangyingwei.cockroach2.common.exception.CockroachUrlNotValidException;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import lombok.EqualsAndHashCode;
@@ -35,7 +34,7 @@ public class Task implements Comparable<Task> {
     @Getter
     private RequestType requestType = RequestType.GET;
     @Getter
-    private TaskStatu statu = TaskStatu.CREATE;
+    private Statu statu = Statu.CREATE;
 
 
     /**
@@ -71,7 +70,7 @@ public class Task implements Comparable<Task> {
         return this;
     }
 
-    public Task statu(TaskStatu statu) {
+    public Task statu(Statu statu) {
         this.statu = statu;
         return this;
     }
@@ -134,5 +133,13 @@ public class Task implements Comparable<Task> {
                 ", params:" + params +
                 ", requestType:" + requestType +
                 '}';
+    }
+
+    public enum Statu {
+        CREATE,
+        START,
+        EXECUTE,
+        STORE,
+        VALID, FINISH
     }
 }

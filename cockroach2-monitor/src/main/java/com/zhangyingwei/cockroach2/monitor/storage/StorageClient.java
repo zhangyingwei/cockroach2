@@ -96,6 +96,14 @@ public class StorageClient {
         return this.taskModels.remove(id);
     }
 
+    /**
+     * 获取 queue 信息
+     * @return
+     */
+    public QueueModel getQueueModel() {
+        return this.queueModel;
+    }
+
     public void print() {
         System.out.println(this.executorModels);
         System.out.println(this.queueModel);

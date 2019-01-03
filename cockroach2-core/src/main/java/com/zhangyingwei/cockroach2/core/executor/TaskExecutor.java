@@ -3,7 +3,6 @@ package com.zhangyingwei.cockroach2.core.executor;
 
 import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.Task;
-import com.zhangyingwei.cockroach2.common.enmus.TaskStatu;
 import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
@@ -59,8 +58,8 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
             if (task != null) {
                 //listener
                 AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.before(task));
-                if (this.validTask(task.statu(TaskStatu.VALID))) {
-                    CockroachRequest request = new CockroachRequest(task.statu(TaskStatu.EXECUTE));
+                if (this.validTask(task.statu(Task.Statu.VALID))) {
+                    CockroachRequest request = new CockroachRequest(task.statu(Task.Statu.EXECUTE));
                     ProxyInfo proxyInfo = null;
                     if (proxy != null) {
                         proxyInfo = proxy.generate(task);
@@ -69,11 +68,11 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
                     CockroachResponse response = this.client.proxy(proxyInfo).execute(request);
                     if (response != null && response.isSuccess()) {
                         response.setQueue(this.queue);
-                        task.statu(TaskStatu.STORE);
+                        task.statu(Task.Statu.STORE);
                         AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.store(task));
                         this.store.store(response);
                         response.close();
-                        task.statu(TaskStatu.FINISH);
+                        task.statu(Task.Statu.FINISH);
                         AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.success(task));
                     }
                 }

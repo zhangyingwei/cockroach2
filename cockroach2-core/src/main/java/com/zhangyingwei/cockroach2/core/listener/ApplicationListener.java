@@ -12,14 +12,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ApplicationListener implements ICListener {
+    private CockroachMonitorApplication application = new CockroachMonitorApplication();
     public void onStart() {
         log.info("executors start!");
         System.out.println(System.getProperties());
-        CockroachMonitorApplication.start();
+        application.start();
     }
 
     public void onStop() {
         log.info("executors done!");
-        CockroachMonitorApplication.stop();
+        application.stop();
     }
 }
