@@ -2,12 +2,11 @@ package com.zhangyingwei.cockroach2.common.async;
 
 import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 
+@Slf4j
 public class AsyncUtils {
 
     private static ExecutorService executor = Executors.newFixedThreadPool(Constants.ASYN_METHOD_THREAD_NUM, new ThreadFactory() {
@@ -20,10 +19,14 @@ public class AsyncUtils {
     });
 
     public static void doVoidMethodAsync(AsyncVoidExecutor asyncExecutor) {
-        CompletableFuture.runAsync(asyncExecutor::executeVoid,executor);
+        CompletableFuture<Void> future = CompletableFuture.runAsync(asyncExecutor::executeVoid, executor);
     }
 
-    public static void shutdown() {
+    public static void shutdown() throws InterruptedException {
         executor.shutdown();
+    }
+
+    public static boolean isTerminated() {
+        return executor.isTerminated();
     }
 }

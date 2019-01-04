@@ -68,7 +68,7 @@ public class ExecutorMonitor implements Runnable {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private void executorStatusMonitor(int numThread) throws IllegalAccessException, InstantiationException {
+    private void executorStatusMonitor(int numThread) throws IllegalAccessException, InstantiationException, InterruptedException {
         ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) this.service;
         int queueSize = poolExecutor.getQueue().size();
         int activeCount = poolExecutor.getActiveCount();
@@ -105,7 +105,6 @@ public class ExecutorMonitor implements Runnable {
             }else {
                 if (!queue.getWithBlock()) {
                     service.shutdown();
-//                    AsyncUtils.shutdown();
                 }
             }
         }

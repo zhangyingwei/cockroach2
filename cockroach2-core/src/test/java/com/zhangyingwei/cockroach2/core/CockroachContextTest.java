@@ -13,7 +13,7 @@ public class CockroachContextTest {
 //    @Test
     public static void main(String[] args) {
         CockroachConfig config = new CockroachConfig().appName("name")
-                .threadSeep(1000)
+                .threadSeep(100)
                 .store(HtmlTitleStore.class);
         CockroachContext context = new CockroachContext(config);
         QueueHandler queueHandler = QueueHandler.initWithDefaultQueue().withBlock(false);
@@ -26,7 +26,7 @@ public class CockroachContextTest {
     @Test
     public void test() {
         CockroachConfig config = new CockroachConfig().appName("name")
-                .threadSeep(1000)
+                .threadSeep(10)
                 .store(HtmlTitleStore.class);
         CockroachContext context = new CockroachContext(config);
         QueueHandler queueHandler = QueueHandler.initWithDefaultQueue().withBlock(true);

@@ -1,6 +1,7 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
 import com.zhangyingwei.cockroach2.common.Task;
+import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
 import com.zhangyingwei.cockroach2.core.listener.ApplicationListener;
@@ -25,12 +26,11 @@ public class ExecuterManager {
     private ExecutorService service = Executors.newCachedThreadPool();
     private List<TaskExecutor> executorList = new ArrayList<>();
     private ApplicationListener applicationListener;
-    private final CountDownLatch latch;
+    private CountDownLatch latch = new CountDownLatch(1);
 
     public ExecuterManager(CockroachConfig config) {
         this.config = config;
         this.applicationListener = new ApplicationListener();
-        this.latch = new CountDownLatch(1);
     }
 
     public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, InterruptedException {
@@ -60,13 +60,21 @@ public class ExecuterManager {
         this.applicationListener.onStart();
         while (true) {
             if (this.service.isTerminated()) {
-                this.applicationListener.onStop();
-                this.latch.countDown();
+                AsyncUtils.shutdown();
                 break;
             }
             TimeUnit.SECONDS.sleep(2);
         }
-        this.latch.await();
+        while (true) {
+            if (AsyncUtils.isTerminated()) {
+                this.applicationListener.onStop();
+                latch.countDown();
+                break;
+            }
+            TimeUnit.SECONDS.sleep(2);
+        }
+        latch.await();
+        System.out.println("executor manager stop!");
     }
 
     public void stop() {

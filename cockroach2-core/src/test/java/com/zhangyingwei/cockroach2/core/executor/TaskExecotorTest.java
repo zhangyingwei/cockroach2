@@ -43,7 +43,7 @@ public class TaskExecotorTest {
         System.out.println("after stream");
     }
 
-    public void feature() {
+    public void feature() throws InterruptedException {
         AsyncUtils.doVoidMethodAsync(() -> {
             System.out.println("");
         });

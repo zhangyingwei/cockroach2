@@ -33,6 +33,7 @@ public class QueueHandler implements ICQueue {
 
     private QueueHandler(ICQueue queue) {
         this.queue = queue;
+        this.listener.create(queue.getClass());
     }
 
     public static QueueHandler initWithQueue(ICQueue queue) {
