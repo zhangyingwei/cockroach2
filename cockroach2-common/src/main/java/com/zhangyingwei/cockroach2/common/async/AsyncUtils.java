@@ -9,11 +9,15 @@ import java.util.concurrent.*;
 @Slf4j
 public class AsyncUtils {
 
-    private static ExecutorService executor = Executors.newFixedThreadPool(Constants.ASYN_METHOD_THREAD_NUM, new ThreadFactory() {
+    /**
+     * 使用 newSingleThreadExecutor 线程次
+     * 其主要特征为： 使用唯一的线程来工作，从而保证多有的任务都是 FIFO
+     */
+    private static ExecutorService executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
         @Override
         public Thread newThread(Runnable runnable) {
             Thread thread = new Thread(runnable);
-            thread.setName("async-"+IdUtils.getId("async"));
+            thread.setName(Constants.THREAD_NAME_ASYNC + IdUtils.getId("async"));
             return thread;
         }
     });
@@ -24,6 +28,7 @@ public class AsyncUtils {
 
     public static void shutdown() throws InterruptedException {
         executor.shutdown();
+        log.debug("async shutdown!");
     }
 
     public static boolean isTerminated() {

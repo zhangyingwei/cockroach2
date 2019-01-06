@@ -26,5 +26,6 @@ public class TmpTaskExecutor extends TaskExecutor{
     public void run() {
         Thread.currentThread().setName(Constants.THREAD_NAME_EXECUTER_TMP.concat(IdUtils.getId("executor-tmp")+""));
         super.execute();
+        super.state = State.OVER;
     }
 }

@@ -20,7 +20,7 @@ public class CategoriesStore implements IStore {
             response.select(".slidecard").select(".slidecard-image > a").stream()
                     .forEach(element -> {
                         String url = element.attr("href");
-                        Task task = new Task("https://www.slidestalk.com".concat(url), "ss.categories.item").higherPriorityBy(response.getTask());
+                        Task task = new Task("https://www.slidestalk.com".concat(url), "ss.categories.item").lowerPriorityBy(response.getTask());
                         task.setData(type);
                         response.getQueue().add(task);
                     });

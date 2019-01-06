@@ -9,6 +9,7 @@ import com.zhangyingwei.cockroach2.http.params.DefaultHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.params.ICookieGenerator;
 import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
+import com.zhangyingwei.cockroach2.monitor.msg.LogMsgHandler;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,21 +24,54 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class CockroachConfig {
+    private boolean runWithJunit = false;
+    /**
+     * app name
+     */
     @Getter
     private String appName = "Cockroach";
+    /**
+     * 工作线程数
+     */
     @Getter
     private int numThread = 1;
+    /**
+     * 线程睡眠时间
+     */
     @Getter
     private int threadSleep = 500;
+
+    /**
+     * http client class
+     * 用于反射创建 http 客户端
+     */
     private Class<? extends ICHttpClient> httpClientClass = COkHttpClient.class;
+    /**
+     * store 类
+     * 用户反射创建 store 类
+     */
     private Class<? extends IStore> storeClass = PrintStore.class;
+    /**
+     * cookie 生成去类
+     * 用于反射生成 cookie 生成器
+     */
     private Class<? extends ICookieGenerator> cookieGeneratorClass;
     private Class<? extends IHeaderGenerator> headerGeneratorClass;
     private Class<? extends ICGenerator> proxyGeneratorClass;
+    private LogMsgHandler logMsgHandler = new LogMsgHandler();
 
     public CockroachConfig appName(String appName) {
         this.appName = appName;
         return this;
+    }
+
+    public CockroachConfig runWithJunit() {
+        this.runWithJunit = true;
+        return this;
+    }
+
+    public boolean isRunWithJunit() {
+        return runWithJunit;
     }
 
     public CockroachConfig numThread(int numThread) {
@@ -126,5 +160,9 @@ public class CockroachConfig {
         headerGenerators.add(this.newHeaderGenerator());
         headerGenerators.add(new DefaultHeaderGenerator());
         return headerGenerators.stream().filter(item -> item!=null).collect(Collectors.toList());
+    }
+
+    public LogMsgHandler getLogMsgHandler() {
+        return this.logMsgHandler;
     }
 }

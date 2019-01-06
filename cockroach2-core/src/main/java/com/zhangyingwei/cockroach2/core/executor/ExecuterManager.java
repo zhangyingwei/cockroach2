@@ -27,27 +27,18 @@ public class ExecuterManager {
     private List<TaskExecutor> executorList = new ArrayList<>();
     private ApplicationListener applicationListener;
     private CountDownLatch latch = new CountDownLatch(1);
+    private ExecutorFactory executorFactory;
 
     public ExecuterManager(CockroachConfig config) {
         this.config = config;
-        this.applicationListener = new ApplicationListener();
+        this.applicationListener = new ApplicationListener(config.getLogMsgHandler());
     }
 
-    public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, InterruptedException {
+    public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException, InterruptedException {
+        this.executorFactory = new ExecutorFactory(queue, this.config);
         int numThread = this.config.getNumThread();
         for (int i = 0; i < numThread; i++) {
-            TaskExecutor execotor = new TaskExecutor(
-                    queue,
-                    new CockroachHttpClient(
-                            this.config.newHttpClient(),
-                            this.config.newCookieGenerator(),
-                            this.config.newHeaderGenerators()
-                    ),
-                    this.config.newProxyGenerator(),
-                    this.config.newStore(),
-                    this.config.getThreadSleep(),
-                    new TaskExecuteListener()
-            );
+            TaskExecutor execotor = this.executorFactory.createExecutor(ExecutorFactory.Type.TASK_EXECUTOR);
             this.service.execute(execotor);
             executorList.add(execotor);
         }
@@ -58,23 +49,40 @@ public class ExecuterManager {
         monitorThread.setDaemon(true);
         monitorThread.start();
         this.applicationListener.onStart();
-        while (true) {
-            if (this.service.isTerminated()) {
-                AsyncUtils.shutdown();
-                break;
+
+        new Thread(() -> {
+            try {
+                while (true) {
+                    if (this.service.isTerminated()) {
+                        AsyncUtils.shutdown();
+                        break;
+                    }
+                    TimeUnit.SECONDS.sleep(1);
+                }
+                while (true) {
+                    if (AsyncUtils.isTerminated()) {
+                        this.config.getLogMsgHandler().shutdown();
+                        break;
+                    }
+                    TimeUnit.SECONDS.sleep(1);
+                }
+                while (true) {
+                    if (this.config.getLogMsgHandler().isTerminated()) {
+                        this.applicationListener.onStop();
+                        latch.countDown();
+                        break;
+                    }
+                    TimeUnit.SECONDS.sleep(1);
+                }
+                log.info("executor manager stop!");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            TimeUnit.SECONDS.sleep(2);
+        }).start();
+
+        if (this.config.isRunWithJunit()) {
+            latch.await();
         }
-        while (true) {
-            if (AsyncUtils.isTerminated()) {
-                this.applicationListener.onStop();
-                latch.countDown();
-                break;
-            }
-            TimeUnit.SECONDS.sleep(2);
-        }
-        latch.await();
-        System.out.println("executor manager stop!");
     }
 
     public void stop() {

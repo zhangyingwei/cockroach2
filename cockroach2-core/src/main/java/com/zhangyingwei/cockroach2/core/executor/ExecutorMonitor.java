@@ -21,6 +21,7 @@ public class ExecutorMonitor implements Runnable {
     private final ExecutorService service;
     private boolean keepRun = true;
     private List<TaskExecutor> executorList;
+    private ExecutorFactory executorFactory;
 
     public ExecutorMonitor(ExecutorService service,
                            QueueHandler queue,
@@ -30,6 +31,7 @@ public class ExecutorMonitor implements Runnable {
         this.queue = queue;
         this.config = config;
         this.executorList = executorList;
+        this.executorFactory = new ExecutorFactory(this.queue, this.config);
     }
 
     @Override
@@ -39,6 +41,8 @@ public class ExecutorMonitor implements Runnable {
         while (keepRun) {
             try {
                 TimeUnit.SECONDS.sleep(5);
+                this.infoPrintMonitor();
+                this.executorStatusCheckMonitor();
                 this.executorStatusMonitor(numThread);
                 this.executorTaskMonitor();
             } catch (InterruptedException e) {
@@ -51,13 +55,46 @@ public class ExecutorMonitor implements Runnable {
         }
     }
 
+    private void infoPrintMonitor() {
+        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) this.service;
+        int queueSize = poolExecutor.getQueue().size();
+        int activeCount = poolExecutor.getActiveCount();
+        long completedTaskCount = poolExecutor.getCompletedTaskCount();
+        long taskCount = poolExecutor.getTaskCount();
+        int waitingExecutor = this.executorList.stream()
+                .map(executor -> executor.getThreadState())
+                .filter(state -> Thread.State.WAITING.equals(state))
+                .collect(Collectors.toList()).size();
+        log.info(
+                "queue({})\twait({})\tactive({})\tcompleted({})\ttask({})\twaiting task({})",
+                queue.size(),
+                queueSize,
+                activeCount,
+                completedTaskCount,
+                taskCount,
+                waitingExecutor
+        );
+    }
+
+    /**
+     * 检查提交的executor是否已经结束，如果已经结束，则拉起来
+     */
+    private void executorStatusCheckMonitor() {
+        this.executorList.stream()
+                .filter(executor -> TaskExecutor.State.OVER.equals(executor.getState())).limit(queue.size())
+                .forEach(taskExecutor -> {
+                    this.service.execute(taskExecutor);
+                    log.debug("{} was resubmited!", taskExecutor.getName());
+                });
+    }
+
     /**
      * 监控所有task的执行时间，如果超时，则杀掉进程重新提交task
      */
     private void executorTaskMonitor() {
         executorList.forEach(executor -> {
             if (executor.isTaskTimeOut()) {
-
+                log.info("task in {} is timeout!", executor.getName());
             }
         });
     }
@@ -68,44 +105,26 @@ public class ExecutorMonitor implements Runnable {
      * @throws IllegalAccessException
      * @throws InstantiationException
      */
-    private void executorStatusMonitor(int numThread) throws IllegalAccessException, InstantiationException, InterruptedException {
+    private void executorStatusMonitor(int numThread) throws IllegalAccessException, InstantiationException {
         ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) this.service;
-        int queueSize = poolExecutor.getQueue().size();
         int activeCount = poolExecutor.getActiveCount();
-        long completedTaskCount = poolExecutor.getCompletedTaskCount();
-        long taskCount = poolExecutor.getTaskCount();
-        int runnableExecutor = this.executorList.stream().map(executor -> executor.getStatus()).filter(state -> Thread.State.RUNNABLE.equals(state)).collect(Collectors.toList()).size();
-        if (runnableExecutor == 0) {
-            log.info(
-                    "queue({})\twait({})\tactive({})\tcompleted({})\ttask({})",
-                    queue.size(),
-                    queueSize,
-                    activeCount,
-                    completedTaskCount,
-                    taskCount
-            );
+        int waitingExecutor = this.executorList.stream()
+                .map(executor -> executor.getThreadState())
+                .filter(state -> Thread.State.WAITING.equals(state))
+                .collect(Collectors.toList()).size();
+        if (waitingExecutor == this.executorList.size()) {
             if (queue.size() > 0) {
-                int tmpNumTherad = numThread / 2;
-                if (tmpNumTherad < 1) {
-                    tmpNumTherad = 1;
-                }
+                int tmpNumTherad = numThread == 1 ? 1 : numThread / 2;
                 for (int i = 0; i < tmpNumTherad; i++) {
-                    this.service.execute(new TmpTaskExecutor(
-                            queue,
-                            new CockroachHttpClient(
-                                    this.config.newHttpClient(), this.config.newCookieGenerator(), this.config.newHeaderGenerators()
-                            ),
-                            this.config.newProxyGenerator(),
-                            this.config.newStore(),
-                            this.config.getThreadSleep(),
-                            new TaskExecuteListener()
-                    ));
+                    this.service.execute(this.executorFactory.createExecutor(ExecutorFactory.Type.TMP_TASK_EXECUTOR));
                 }
                 log.info("submit {} tmp executor!", tmpNumTherad);
-            }else {
-                if (!queue.getWithBlock()) {
-                    service.shutdown();
-                }
+            }
+        }
+        if (activeCount == 0) {
+            if (!queue.getWithBlock() && !service.isShutdown()) {
+                service.shutdown();
+                log.debug("main service shutdown!");
             }
         }
     }

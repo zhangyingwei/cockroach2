@@ -21,7 +21,7 @@ public class MainStore implements IStore {
                         String url = element.attr("href");
                         String type = element.text();
                         Task task = new Task("https://www.slidestalk.com".concat(url), "ss.categories")
-                                .higherPriorityBy(response.getTask());
+                                .lowerPriorityBy(response.getTask());
                         task.setData(type);
                         response.getQueue().add(task);
                     });

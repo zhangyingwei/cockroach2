@@ -1,6 +1,7 @@
 package com.zhangyingwei.cockroach2.core.listener;
 
 import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
+import com.zhangyingwei.cockroach2.monitor.msg.LogMsgHandler;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -11,6 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ApplicationListener implements ICListener {
+    private LogMsgHandler logMsgHandler;
+
+    public ApplicationListener(LogMsgHandler logMsgHandler) {
+        this.logMsgHandler = logMsgHandler;
+    }
+
     public void onStart() {
         log.info("executors start!");
     }

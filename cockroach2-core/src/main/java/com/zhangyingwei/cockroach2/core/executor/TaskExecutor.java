@@ -14,6 +14,7 @@ import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CountDownLatch;
@@ -27,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TaskExecutor implements ICTaskExecutor,Runnable {
     private final TaskExecuteListener taskExecuteListener;
+    @Getter
     private String name = Constants.THREAD_NAME_EXECUTER + IdUtils.getId("TaskExecotor");
     private Boolean keepRun = true;
     protected QueueHandler queue;
@@ -34,7 +36,8 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
     private final ICGenerator<ProxyInfo> proxy;
     private final IStore store;
     private final int threadSleep;
-    private Thread currentThread = null;
+    protected State state = State.RUNNING;
+    private Thread currentThread;
 
     public TaskExecutor(
             QueueHandler queue,
@@ -76,10 +79,8 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
                         AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.success(task));
                     }
                 }
-                //listener
-                AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.after(task));
             } else {
-                log.debug("task is null!");
+                log.debug("task is null and {} was over!", this.getName());
             }
         } catch (TaskExecuteException e) {
             AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.failed(task));
@@ -88,6 +89,9 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
                 this.queue.add(task);
                 log.info("make task retry: {}", task);
             }
+        }finally {
+            //listener
+            AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.after(task));
         }
         return task;
     }
@@ -105,32 +109,34 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
     public void run() {
         Thread.currentThread().setName(this.name);
         this.currentThread = Thread.currentThread();
-        taskExecuteListener.start(
-                this.name,
-                this.client.getClient() == null? null:this.client.getClient().getClass(),
-                this.proxy == null?null:this.proxy.getClass(),
-                this.store == null?null:this.store.getClass(),
-                threadSleep
-        );
-        while (keepRun) {
-            try {
-                Task task = this.execute();
-                if (task == null) {
-                    break;
-                }
+        AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.start(this.getName()));
+        try {
+            Task task = this.execute();
+            while (keepRun && task != null) {
+                task = this.execute();
                 TimeUnit.MILLISECONDS.sleep(this.threadSleep);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
+        } catch (InterruptedException e) {
+            log.error(e.getLocalizedMessage());
+        }finally {
+            AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.stop(this.getName()));
+            this.state = State.OVER;
         }
-        taskExecuteListener.stop(this.name);
     }
 
-    public Thread.State getStatus() {
+    public synchronized State getState() {
+        return this.state;
+    }
+
+    public synchronized Thread.State getThreadState() {
         return this.currentThread.getState();
     }
 
-    public boolean isTaskTimeOut() {
+    public synchronized boolean isTaskTimeOut() {
         return false;
+    }
+
+    enum State {
+        RUNNING,OVER
     }
 }

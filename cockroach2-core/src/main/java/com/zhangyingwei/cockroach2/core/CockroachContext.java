@@ -36,7 +36,7 @@ public class CockroachContext {
             try {
                 this.executerManager.start(queue);
                 this.start = true;
-            } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException|InterruptedException e) {
+            } catch (IllegalAccessException | InstantiationException |InterruptedException e) {
                 log.info("start faild: {}", e.getLocalizedMessage());
                 e.printStackTrace();
             }

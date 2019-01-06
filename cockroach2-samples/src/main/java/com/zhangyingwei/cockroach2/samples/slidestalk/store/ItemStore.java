@@ -29,7 +29,7 @@ public class ItemStore implements IStore {
                         if (url == null || url.length() == 0) {
                             url = img.attr("src");
                         }
-                        Task task = new Task(url, "ss.categories.item.imgs").higherPriorityBy(response.getTask());
+                        Task task = new Task(url, "ss.categories.item.imgs").lowerPriorityBy(response.getTask());
                         String[] urlItems = url.split("\\/");
                         task.setData(new HashMap<String,String>(){
                             {
