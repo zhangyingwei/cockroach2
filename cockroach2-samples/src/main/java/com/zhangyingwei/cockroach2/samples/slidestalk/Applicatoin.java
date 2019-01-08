@@ -26,7 +26,7 @@ public class Applicatoin {
     }
 
     private static QueueHandler getQueue() {
-        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue(10000).withBlock(true).limit(50L);
+        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue(10000).withBlock(false).limit(50L);
         queueHandler.withFilter(task -> task.getUrl() != null && !task.getUrl().equals("https://www.slidestalk.com"));
         queueHandler.add(new Task("https://www.slidestalk.com/categories/1","ss"));
         return queueHandler;

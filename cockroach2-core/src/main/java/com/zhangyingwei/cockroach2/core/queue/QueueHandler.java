@@ -113,14 +113,13 @@ public class QueueHandler implements ICQueue {
             }
             if (accept) {
                 if (this.limitSize > 0) {
-                    if (this.queue.size() <= this.limitSize) {
-                        this.queue.add(task);
-                        AsyncUtils.doVoidMethodAsync(() -> listener.add(task));
-                        this.condition.signalAll();
-                    } else {
+                    if (this.queue.size() >= this.limitSize) {
                         log.debug("queue add was blocked, size is: {}",queue.size());
                         this.condition.await();
                     }
+                    this.queue.add(task);
+                    AsyncUtils.doVoidMethodAsync(() -> listener.add(task));
+                    this.condition.signalAll();
                 } else {
                     this.queue.add(task);
                     AsyncUtils.doVoidMethodAsync(() -> listener.add(task));

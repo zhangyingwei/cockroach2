@@ -8,11 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class QueueListener implements ICListener<Task> {
+//    private Long count = 0L;
 
     public void get(final Task task) {
     }
 
     public void add(final Task task) {
+//        System.out.println("queue add count:" + ++count);
     }
 
     public void create(Class<? extends ICQueue> clazz) {

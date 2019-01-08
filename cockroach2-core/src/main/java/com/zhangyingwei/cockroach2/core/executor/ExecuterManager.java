@@ -31,7 +31,7 @@ public class ExecuterManager {
 
     public ExecuterManager(CockroachConfig config) {
         this.config = config;
-        this.applicationListener = new ApplicationListener(config.getLogMsgHandler());
+        this.applicationListener = new ApplicationListener(this.config);
     }
 
     public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException, InterruptedException {
@@ -61,6 +61,7 @@ public class ExecuterManager {
                 }
                 while (true) {
                     if (AsyncUtils.isTerminated()) {
+                        this.applicationListener.onStop();
                         this.config.getLogMsgHandler().shutdown();
                         break;
                     }
@@ -68,7 +69,6 @@ public class ExecuterManager {
                 }
                 while (true) {
                     if (this.config.getLogMsgHandler().isTerminated()) {
-                        this.applicationListener.onStop();
                         latch.countDown();
                         break;
                     }

@@ -140,6 +140,6 @@ public class Task implements Comparable<Task> {
         START,
         EXECUTE,
         STORE,
-        VALID, FINISH
+        VALID, FAILD, FINISH
     }
 }

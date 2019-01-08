@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class TaskExecutor implements ICTaskExecutor,Runnable {
-    private final TaskExecuteListener taskExecuteListener;
+    protected final TaskExecuteListener taskExecuteListener;
     @Getter
     private String name = Constants.THREAD_NAME_EXECUTER + IdUtils.getId("TaskExecotor");
     private Boolean keepRun = true;
@@ -73,10 +73,16 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
                         response.setQueue(this.queue);
                         task.statu(Task.Statu.STORE);
                         AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.store(task));
-                        this.store.store(response);
-                        response.close();
-                        task.statu(Task.Statu.FINISH);
-                        AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.success(task));
+                        try {
+                            this.store.store(response);
+                            task.statu(Task.Statu.FINISH);
+                        } catch (Exception e) {
+                            log.error(e.getLocalizedMessage());
+                        }finally {
+                            task.statu(Task.Statu.FAILD);
+                            response.close();
+                            AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.success(task));
+                        }
                     }
                 }
             } else {

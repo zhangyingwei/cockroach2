@@ -2,6 +2,7 @@ package com.zhangyingwei.cockroach2.core.executor;
 
 
 import com.zhangyingwei.cockroach2.common.Constants;
+import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
@@ -25,7 +26,9 @@ public class TmpTaskExecutor extends TaskExecutor{
     @Override
     public void run() {
         Thread.currentThread().setName(Constants.THREAD_NAME_EXECUTER_TMP.concat(IdUtils.getId("executor-tmp")+""));
+        AsyncUtils.doVoidMethodAsync(() -> super.taskExecuteListener.start(this.getName()));
         super.execute();
         super.state = State.OVER;
+        AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.stop(this.getName()));
     }
 }
