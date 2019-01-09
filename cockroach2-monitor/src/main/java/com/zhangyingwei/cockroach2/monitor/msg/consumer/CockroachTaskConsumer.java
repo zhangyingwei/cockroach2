@@ -13,10 +13,6 @@ public class CockroachTaskConsumer implements ICMsgConsumer {
     public void consusmer(Msg msg) {
         if ("before".equals(msg.getMsgOf(Msg.Keys.TASK_ACTION))) {
             taskCount++;
-            System.out.println(taskCount);
-        }
-        if (msg.getGroup().equals(Msg.Group.APPLICATION)) {
-            log.debug("application action : {}",msg.getMsgOf(Msg.Keys.APPLICATION_ACTION));
         }
         if ("stop".equals(msg.getMsgOf(Msg.Keys.APPLICATION_ACTION))) {
             log.info("task count is :{}", taskCount);

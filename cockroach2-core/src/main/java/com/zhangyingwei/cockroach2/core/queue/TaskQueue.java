@@ -36,7 +36,7 @@ public class TaskQueue implements ICQueue {
     @Override
     public Task get() {
         Task task = this.queue.poll();
-        log.debug("take task: {}", task);
+//        log.debug("take task: {}", task);
         return task;
     }
 
@@ -46,7 +46,7 @@ public class TaskQueue implements ICQueue {
     public void add(Task task) {
         try {
             this.queue.put(task);
-            log.debug("put task: {}", task);
+//            log.debug("put task: {}", task);
         } catch (InterruptedException e) {
             log.info("add task faild:{} - {}",task,e.getLocalizedMessage());
         }

@@ -7,6 +7,7 @@ import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
+import com.zhangyingwei.cockroach2.common.utils.LogUtils;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
 import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
@@ -15,6 +16,7 @@ import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CountDownLatch;
@@ -36,6 +38,7 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
     private final ICGenerator<ProxyInfo> proxy;
     private final IStore store;
     private final int threadSleep;
+    @Setter
     protected State state = State.RUNNING;
     private Thread currentThread;
 
@@ -86,14 +89,14 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
                     }
                 }
             } else {
-                log.debug("task is null and {} was over!", this.getName());
+                log.debug("{}: task is null and {} was over!", LogUtils.getExecutorTagColor("executor"), this.getName());
             }
         } catch (TaskExecuteException e) {
             AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.failed(task));
-            log.info("execure error with task {}: {}", task, e.getLocalizedMessage());
+            log.info("{}: execure error with task {}: {}", LogUtils.getExecutorTagColor("executor"), task, e.getLocalizedMessage());
             if (task.needRetry()) {
                 this.queue.add(task);
-                log.info("make task retry: {}", task);
+                log.info("{}: make task retry: {}", LogUtils.getExecutorTagColor("executor"), task);
             }
         }finally {
             //listener
@@ -114,6 +117,7 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
     @Override
     public void run() {
         Thread.currentThread().setName(this.name);
+        this.state = State.RUNNING;
         this.currentThread = Thread.currentThread();
         AsyncUtils.doVoidMethodAsync(() -> taskExecuteListener.start(this.getName()));
         try {

@@ -50,6 +50,9 @@ public class ExecuterManager {
         monitorThread.start();
         this.applicationListener.onStart();
 
+        /**
+         * 监控所有线程池是否都执行完毕的线程
+         */
         new Thread(() -> {
             try {
                 while (true) {

@@ -24,10 +24,7 @@ public class LogMsgHandler {
     });
     private Boolean run = true;
 
-    public LogMsgHandler() {
-        registerConsumer(new DefaultCockroachConsumer());
-        registerConsumer(new CockroachTaskConsumer());
-    }
+    public LogMsgHandler() {}
 
     public void produce(Msg msg) {
         producer.produce(msg);

@@ -3,12 +3,14 @@ package com.zhangyingwei.cockroach2.core.executor;
 import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
+import com.zhangyingwei.cockroach2.common.utils.LogUtils;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
 import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import lombok.extern.slf4j.Slf4j;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -36,7 +38,7 @@ public class ExecutorMonitor implements Runnable {
 
     @Override
     public void run() {
-        Thread.currentThread().setName(Constants.THREAD_NAME_MOINTOR.concat(IdUtils.getId("EMonitor")+""));
+        Thread.currentThread().setName(Constants.THREAD_NAME_MOINTOR.concat(IdUtils.getId(ExecutorMonitor.class.getName())+""));
         int numThread = this.config.getNumThread();
         while (keepRun) {
             try {
@@ -66,7 +68,7 @@ public class ExecutorMonitor implements Runnable {
                 .filter(state -> Thread.State.WAITING.equals(state))
                 .collect(Collectors.toList()).size();
         log.info(
-                "queue({})\twait({})\tactive({})\tcompleted({})\ttask({})\twaiting task({})",
+                LogUtils.getLineColot("queue({})\twait({})\tactive({})\tcompleted({})\ttask({})\twaiting task({})"),
                 queue.size(),
                 queueSize,
                 activeCount,
@@ -81,10 +83,9 @@ public class ExecutorMonitor implements Runnable {
      */
     private void executorStatusCheckMonitor() {
         this.executorList.stream()
-                .filter(executor -> TaskExecutor.State.OVER.equals(executor.getState())).limit(queue.size())
-                .forEach(taskExecutor -> {
+                .filter(executor -> TaskExecutor.State.OVER.equals(executor.getState())).limit(queue.size()).forEach(taskExecutor -> {
                     this.service.execute(taskExecutor);
-                    log.debug("{} was resubmited!", taskExecutor.getName());
+                    log.debug(LogUtils.getLineColot("{} was resubmited!"), taskExecutor.getName());
                 });
     }
 
@@ -94,7 +95,7 @@ public class ExecutorMonitor implements Runnable {
     private void executorTaskMonitor() {
         executorList.forEach(executor -> {
             if (executor.isTaskTimeOut()) {
-                log.info("task in {} is timeout!", executor.getName());
+                log.info(LogUtils.getLineColot("task in {} is timeout!"), executor.getName());
             }
         });
     }
@@ -112,19 +113,20 @@ public class ExecutorMonitor implements Runnable {
                 .map(executor -> executor.getThreadState())
                 .filter(state -> Thread.State.WAITING.equals(state))
                 .collect(Collectors.toList()).size();
-        if (waitingExecutor == this.executorList.size()) {
+        if (waitingExecutor == this.executorList.size() || (numThread - waitingExecutor) < numThread / 2) {
             if (queue.size() > 0) {
-                int tmpNumTherad = numThread == 1 ? 1 : numThread / 2;
+//                int tmpNumTherad = numThread == 1 ? 1 : numThread / 2;
+                int tmpNumTherad = numThread;
                 for (int i = 0; i < tmpNumTherad; i++) {
                     this.service.execute(this.executorFactory.createExecutor(ExecutorFactory.Type.TMP_TASK_EXECUTOR));
                 }
-                log.info("submit {} tmp executor!", tmpNumTherad);
+                log.info(LogUtils.getLineColot("submit {} tmp executor!"), tmpNumTherad);
             }
         }
         if (activeCount == 0) {
             if (!queue.getWithBlock() && !service.isShutdown()) {
                 service.shutdown();
-                log.debug("main service shutdown!");
+                log.debug(LogUtils.getLineColot("main service shutdown!"));
             }
         }
     }

@@ -3,6 +3,7 @@ package com.zhangyingwei.cockroach2.core.http;
 import com.zhangyingwei.cockroach2.common.exception.TaskExecuteException;
 import com.zhangyingwei.cockroach2.common.generators.ICMapGenerator;
 import com.zhangyingwei.cockroach2.common.generators.ICStringGenerator;
+import com.zhangyingwei.cockroach2.common.utils.LogUtils;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
 import com.zhangyingwei.cockroach2.http.params.ICookieGenerator;
 import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
@@ -45,9 +46,8 @@ public class CockroachHttpClient implements ICHttpClient {
                 request.getHeader().setHeaders(headerGenerator.generate(request.getTask()));
             });
         }
-        log.debug("http execute with header: {} ",request.getHeader().getHeaders());
         CockroachResponse response = this.client.execute(request);
-        log.debug("{} : {}", request.getRequestType(), request.getUrl());
+        log.debug("{} : {}\t header: {}", LogUtils.getTagColor(request.getRequestType()), request.getUrl(), request.getHeader().getHeaders());
         if (response != null) {
             response.setTask(request.getTask());
         }

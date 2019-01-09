@@ -1,6 +1,12 @@
 package com.zhangyingwei.cockroach2.core.config;
 
+import com.zhangyingwei.cockroach2.common.ConfigConstants;
+import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
+import com.zhangyingwei.cockroach2.common.utils.ClassUtils;
+import com.zhangyingwei.cockroach2.common.utils.LogUtils;
+import com.zhangyingwei.cockroach2.common.utils.NameUtil;
+import com.zhangyingwei.cockroach2.common.utils.PropertiesUtils;
 import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.core.store.PrintStore;
 import com.zhangyingwei.cockroach2.http.ICHttpClient;
@@ -10,11 +16,15 @@ import com.zhangyingwei.cockroach2.http.params.ICookieGenerator;
 import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.monitor.msg.LogMsgHandler;
+import com.zhangyingwei.cockroach2.monitor.msg.consumer.ICMsgConsumer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.fusesource.jansi.Ansi;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +69,40 @@ public class CockroachConfig {
     private Class<? extends IHeaderGenerator> headerGeneratorClass;
     private Class<? extends ICGenerator> proxyGeneratorClass;
     private LogMsgHandler logMsgHandler = new LogMsgHandler();
+
+    public CockroachConfig(){}
+
+    /**
+     * load config by properties
+     * @param properties
+     */
+    public CockroachConfig(Properties properties) throws ClassNotFoundException {
+        this.appName(PropertiesUtils.getOrDefault(properties,ConfigConstants.KEY_CONFIG_APPNAME,NameUtil.getName()));
+        this.threadSeep(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_THREADSLEEP, ConfigConstants.THREAD_SLEEP));
+        this.numThread(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_NUMTHREAD, ConfigConstants.THREAD_NUM));
+        this.store(ClassUtils.getOrNullClass(
+                PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_STORE, ConfigConstants.STORE)
+        ));
+        this.proxyGenerator(ClassUtils.getOrNullClass(
+                PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_PROXYGENERATOR, null)
+        ));
+        this.headerGenerator(ClassUtils.getOrNullClass(
+                PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_HEADERGENERATOR, null)
+        ));
+        this.httpClient(ClassUtils.getOrNullClass(
+                PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_HTTPCLIENT, ConfigConstants.HTTPCLIENT)
+        ));
+        List<Class<? extends ICMsgConsumer>> consumers = ClassUtils.getClasses(
+                PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_LOGCONSUMERS, null)
+        );
+        consumers.forEach(consumer -> {
+            this.addLogConsumer(consumer);
+        });
+    }
+
+    public CockroachConfig(String configPath) throws IOException, ClassNotFoundException {
+        this(PropertiesUtils.load(configPath));
+    }
 
     public CockroachConfig appName(String appName) {
         this.appName = appName;
@@ -164,5 +208,15 @@ public class CockroachConfig {
 
     public LogMsgHandler getLogMsgHandler() {
         return this.logMsgHandler;
+    }
+
+    public CockroachConfig addLogConsumer(Class<? extends ICMsgConsumer> consumer) {
+        try {
+            this.logMsgHandler.registerConsumer(consumer.newInstance());
+        } catch (InstantiationException|IllegalAccessException e) {
+            log.error(e.getLocalizedMessage());
+            e.printStackTrace();
+        }
+        return this;
     }
 }
