@@ -40,10 +40,9 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
     private final IStore store;
     private final ThreadSleepTool sleepTool;
     protected final AsyncManager asyncManager;
-
     @Setter
     protected State state = State.RUNNING;
-    private Thread currentThread;
+    protected Thread currentThread;
 
     public TaskExecutor(QueueHandler queue, CockroachConfig config) throws InstantiationException, IllegalAccessException {
         this.queue = queue;
