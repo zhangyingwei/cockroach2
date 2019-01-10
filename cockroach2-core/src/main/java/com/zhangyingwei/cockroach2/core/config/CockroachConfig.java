@@ -1,10 +1,9 @@
 package com.zhangyingwei.cockroach2.core.config;
 
 import com.zhangyingwei.cockroach2.common.ConfigConstants;
-import com.zhangyingwei.cockroach2.common.Constants;
+import com.zhangyingwei.cockroach2.common.async.AsyncManager;
 import com.zhangyingwei.cockroach2.common.generators.ICGenerator;
 import com.zhangyingwei.cockroach2.common.utils.ClassUtils;
-import com.zhangyingwei.cockroach2.common.utils.LogUtils;
 import com.zhangyingwei.cockroach2.common.utils.NameUtil;
 import com.zhangyingwei.cockroach2.common.utils.PropertiesUtils;
 import com.zhangyingwei.cockroach2.core.store.IStore;
@@ -19,7 +18,6 @@ import com.zhangyingwei.cockroach2.monitor.msg.LogMsgHandler;
 import com.zhangyingwei.cockroach2.monitor.msg.consumer.ICMsgConsumer;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.fusesource.jansi.Ansi;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,6 +49,9 @@ public class CockroachConfig {
     @Getter
     private int threadSleep = 500;
 
+    @Getter
+    private Integer minThreadSleep;
+
     /**
      * http client class
      * 用于反射创建 http 客户端
@@ -69,6 +70,8 @@ public class CockroachConfig {
     private Class<? extends IHeaderGenerator> headerGeneratorClass;
     private Class<? extends ICGenerator> proxyGeneratorClass;
     private LogMsgHandler logMsgHandler = new LogMsgHandler();
+    @Getter
+    private AsyncManager asyncManager = new AsyncManager();
 
     public CockroachConfig(){}
 
@@ -125,6 +128,11 @@ public class CockroachConfig {
 
     public CockroachConfig threadSeep(int sleep) {
         this.threadSleep = sleep;
+        return this;
+    }
+
+    public CockroachConfig threadSeepMin(int sleep) {
+        this.minThreadSleep = sleep;
         return this;
     }
 

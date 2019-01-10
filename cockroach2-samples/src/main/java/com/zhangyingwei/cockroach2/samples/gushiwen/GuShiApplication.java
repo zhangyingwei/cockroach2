@@ -16,9 +16,9 @@ import java.util.HashMap;
 public class GuShiApplication {
     public static void main(String[] args) {
         CockroachConfig config = new CockroachConfig()
-                .appName("古诗文网").numThread(1).threadSeep(1000).store(GuShiStore.class);
+                .appName("古诗文网").numThread(10).threadSeep(5000).threadSeepMin(1000).store(GuShiStore.class);
         CockroachContext context = new CockroachContext(config);
-        QueueHandler queue = QueueHandler.initWithDefaultQueue();
+        QueueHandler queue = new QueueHandler.Builder().build();
         Task task = new Task("https://so.gushiwen.org/authors/default.aspx","gs");
         task.setParams(new HashMap<String, String>(){
             {

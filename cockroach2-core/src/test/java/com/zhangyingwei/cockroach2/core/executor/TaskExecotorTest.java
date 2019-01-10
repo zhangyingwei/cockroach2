@@ -1,6 +1,6 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
-import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
+import com.zhangyingwei.cockroach2.common.async.AsyncManager;
 import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.*;
 import java.util.stream.Stream;
@@ -44,10 +44,11 @@ public class TaskExecotorTest {
     }
 
     public void feature() throws InterruptedException {
-        AsyncUtils.doVoidMethodAsync(() -> {
+        AsyncManager manager = new AsyncManager();
+        manager.doVoidMethodAsync(() -> {
             System.out.println("");
         });
         System.out.println("after method");
-        AsyncUtils.shutdown();
+        manager.shutdown();
     }
 }

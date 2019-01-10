@@ -18,7 +18,7 @@ public class CookieGeneratorApplication {
                 .store(HtmlTitleStore.class)
                 .cookidGenerator(CookieGeneratorApplication.MyCookieGenerator.class);
         CockroachContext context = new CockroachContext(config);
-        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue().withBlock(false);
+        QueueHandler queueHandler = new QueueHandler.Builder().withBlock(false).build();
         for (int i = 0; i < 10; i++) {
             queueHandler.add(new Task("https://baidu.com"));
         }

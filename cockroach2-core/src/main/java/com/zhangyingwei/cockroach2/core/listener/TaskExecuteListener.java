@@ -1,6 +1,7 @@
 package com.zhangyingwei.cockroach2.core.listener;
 
 import com.zhangyingwei.cockroach2.common.Task;
+import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.executor.TaskExecutor;
 import com.zhangyingwei.cockroach2.monitor.msg.LogMsgHandler;
 import com.zhangyingwei.cockroach2.monitor.msg.Msg;
@@ -8,17 +9,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TaskExecuteListener implements ICListener<Task> {
-    private LogMsgHandler logMsgHandler;
+    private final CockroachConfig config;
 
-    public TaskExecuteListener(LogMsgHandler logMsgHandler) {
-        this.logMsgHandler = logMsgHandler;
+    public TaskExecuteListener(CockroachConfig config) {
+        this.config = config;
     }
 
     public void start(String name) {
         Msg msg = new Msg(name, Msg.Group.EXECUTOR);
         msg.addMsg(Msg.Keys.EXECUTOR_ACTION, "start");
         msg.addMsg(Msg.Keys.EXECUTOR_TIMESTAMP, System.currentTimeMillis());
-        logMsgHandler.produce(msg);
+        config.getLogMsgHandler().produce(msg);
     }
 
     public void before(final Task task) {
@@ -29,7 +30,7 @@ public class TaskExecuteListener implements ICListener<Task> {
         msg.addMsg(Msg.Keys.TASK_GROUP, task.getGroup());
         msg.addMsg(Msg.Keys.TASK_REQ_TYPE, task.getRequestType());
         msg.addMsg(Msg.Keys.TASK_REQ_PARAMS, task.getParams());
-        logMsgHandler.produce(msg);
+        config.getLogMsgHandler().produce(msg);
     }
 
     public void after(final Task task) {
@@ -40,7 +41,7 @@ public class TaskExecuteListener implements ICListener<Task> {
         msg.addMsg(Msg.Keys.TASK_GROUP, task.getGroup());
         msg.addMsg(Msg.Keys.TASK_REQ_TYPE, task.getRequestType());
         msg.addMsg(Msg.Keys.TASK_REQ_PARAMS, task.getParams());
-        logMsgHandler.produce(msg);
+        config.getLogMsgHandler().produce(msg);
     }
 
     public void execute(final Task task) {
@@ -51,7 +52,7 @@ public class TaskExecuteListener implements ICListener<Task> {
         msg.addMsg(Msg.Keys.TASK_GROUP, task.getGroup());
         msg.addMsg(Msg.Keys.TASK_REQ_TYPE, task.getRequestType());
         msg.addMsg(Msg.Keys.TASK_REQ_PARAMS, task.getParams());
-        logMsgHandler.produce(msg);
+        config.getLogMsgHandler().produce(msg);
     }
 
     public void store(final Task task) {
@@ -62,7 +63,7 @@ public class TaskExecuteListener implements ICListener<Task> {
         msg.addMsg(Msg.Keys.TASK_GROUP, task.getGroup());
         msg.addMsg(Msg.Keys.TASK_REQ_TYPE, task.getRequestType());
         msg.addMsg(Msg.Keys.TASK_REQ_PARAMS, task.getParams());
-        logMsgHandler.produce(msg);
+        config.getLogMsgHandler().produce(msg);
     }
 
     public void success(final Task task) {
@@ -73,7 +74,7 @@ public class TaskExecuteListener implements ICListener<Task> {
         msg.addMsg(Msg.Keys.TASK_GROUP, task.getGroup());
         msg.addMsg(Msg.Keys.TASK_REQ_TYPE, task.getRequestType());
         msg.addMsg(Msg.Keys.TASK_REQ_PARAMS, task.getParams());
-        logMsgHandler.produce(msg);
+        config.getLogMsgHandler().produce(msg);
     }
 
     public void failed(final Task task) {
@@ -84,13 +85,13 @@ public class TaskExecuteListener implements ICListener<Task> {
         msg.addMsg(Msg.Keys.TASK_GROUP, task.getGroup());
         msg.addMsg(Msg.Keys.TASK_REQ_TYPE, task.getRequestType());
         msg.addMsg(Msg.Keys.TASK_REQ_PARAMS, task.getParams());
-        logMsgHandler.produce(msg);
+        config.getLogMsgHandler().produce(msg);
     }
 
     public void stop(final String name) {
         Msg msg = new Msg(name, Msg.Group.EXECUTOR);
         msg.addMsg(Msg.Keys.EXECUTOR_ACTION, "stop");
         msg.addMsg(Msg.Keys.EXECUTOR_TIMESTAMP, System.currentTimeMillis());
-        logMsgHandler.produce(msg);
+        config.getLogMsgHandler().produce(msg);
     }
 }

@@ -1,6 +1,5 @@
 package com.zhangyingwei.cockroach2.core.listener;
 
-import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.monitor.msg.LogMsgHandler;
 import com.zhangyingwei.cockroach2.monitor.msg.Msg;

@@ -27,4 +27,19 @@ public class CockroachHttpClientTest {
         CockroachResponse resp = client.execute(new CockroachRequest(task));
         System.out.println(resp.getContent().string());
     }
+
+    @Test
+    public void execute1() {
+        //TODO
+    }
+
+    @Test
+    public void proxy() {
+        //TODO
+    }
+
+    @Test
+    public void getClient() {
+        //TODO
+    }
 }

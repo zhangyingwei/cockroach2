@@ -1,6 +1,7 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
 
+import com.zhangyingwei.cockroach2.common.utils.ThreadSleepTool;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
 import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
@@ -34,32 +35,13 @@ public class ExecutorFactory {
     }
 
     private TaskExecutor createTmpTaskExecutor() throws InstantiationException, IllegalAccessException {
-        return new TmpTaskExecutor(
-                queue,
-                new CockroachHttpClient(
-                        this.config.newHttpClient(),
-                        this.config.newCookieGenerator(),
-                        this.config.newHeaderGenerators()
-                ),
-                this.config.newProxyGenerator(),
-                this.config.newStore(),
-                this.config.getThreadSleep(),
-                new TaskExecuteListener(this.config.getLogMsgHandler())
-        );
+        return new TmpTaskExecutor(queue,this.config);
     }
 
     private TaskExecutor createTaskExecutor() throws InstantiationException, IllegalAccessException {
         return new TaskExecutor(
                 queue,
-                new CockroachHttpClient(
-                        this.config.newHttpClient(),
-                        this.config.newCookieGenerator(),
-                        this.config.newHeaderGenerators()
-                ),
-                this.config.newProxyGenerator(),
-                this.config.newStore(),
-                this.config.getThreadSleep(),
-                new TaskExecuteListener(this.config.getLogMsgHandler())
+                config
         );
     }
 }

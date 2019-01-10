@@ -2,9 +2,8 @@ package com.zhangyingwei.cockroach2.core.queue;
 
 import com.zhangyingwei.cockroach2.common.Constants;
 import com.zhangyingwei.cockroach2.common.Task;
-import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
+import com.zhangyingwei.cockroach2.common.async.AsyncManager;
 import com.zhangyingwei.cockroach2.common.utils.LogUtils;
-import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.listener.QueueListener;
 import com.zhangyingwei.cockroach2.core.queue.filter.ICQueueFilter;
 import com.zhangyingwei.cockroach2.queue.ICQueue;
@@ -14,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Stream;
 
 /**
  * @author zhangyw
@@ -24,44 +24,58 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class QueueHandler implements ICQueue {
     private ICQueue queue;
-    private Set<ICQueueFilter> filters = new HashSet<ICQueueFilter>();
+    private Queue<ICQueueFilter> filters;
     @Getter
-    private Boolean withBlock = false;
+    private Boolean withBlock;
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
-    private Long limitSize = -1L;
-    private final QueueListener listener = new QueueListener();
+    private Long limitSize;
 
-    private QueueHandler(ICQueue queue) {
-        this.queue = queue;
-        this.listener.create(queue.getClass());
+    private QueueHandler(Builder builder) {
+        this.queue = builder.queue;
+        this.filters = builder.filters;
+        this.withBlock = builder.withBlock;
+        this.limitSize = builder.limitSize;
     }
 
-    public static QueueHandler initWithQueue(ICQueue queue) {
-        return new QueueHandler(queue);
-    }
+    public static class Builder {
+        private ICQueue queue;
+        private Queue<ICQueueFilter> filters = new ArrayDeque<ICQueueFilter>();
+        private Boolean withBlock = false;
+        private final ReentrantLock lock = new ReentrantLock();
+        private final Condition condition = lock.newCondition();
+        private Long limitSize = -1L;
 
-    public static QueueHandler initWithDefaultQueue(int calacify) {
-        return new QueueHandler(new TaskQueue(calacify));
-    }
+        public Builder(ICQueue queue) {
+            this.queue = queue;
+        }
 
-    public static QueueHandler initWithDefaultQueue() {
-        return initWithDefaultQueue(Constants.QUEUE_SIZE);
-    }
+        public Builder(int calacify) {
+            this.queue = new TaskQueue(calacify);
+        }
 
-    public QueueHandler withFilter(ICQueueFilter filter) {
-        this.filters.add(filter);
-        return this;
-    }
+        public Builder() {
+            this(Constants.QUEUE_SIZE);
+        }
 
-    public QueueHandler limit(Long limit) {
-        this.limitSize = limit;
-        return this;
-    }
+        public Builder withFilter(ICQueueFilter filter) {
+            this.filters.add(filter);
+            return this;
+        }
 
-    public QueueHandler withBlock(Boolean block) {
-        this.withBlock = block;
-        return this;
+        public Builder limit(Long limit) {
+            this.limitSize = limit;
+            return this;
+        }
+
+        public Builder withBlock(Boolean block) {
+            this.withBlock = block;
+            return this;
+        }
+
+        public QueueHandler build() {
+            return new QueueHandler(this);
+        }
     }
 
     @Override
@@ -86,12 +100,10 @@ public class QueueHandler implements ICQueue {
                  */
                 log.debug("{}: get task: {}",LogUtils.getQueueTagColor("queue"),task);
                 Task finalTask = task;
-                AsyncUtils.doVoidMethodAsync(() -> listener.get(finalTask));
                 return task;
             }
             log.debug("{}: get task: {}",LogUtils.getQueueTagColor("queue"),task);
             Task finalTask1 = task;
-            AsyncUtils.doVoidMethodAsync(() -> listener.get(finalTask1));
             return task;
         } catch (InterruptedException e) {
             log.error("{}: get task from queue error: {}",LogUtils.getQueueTagColor("queue"), e.getLocalizedMessage());
@@ -105,15 +117,13 @@ public class QueueHandler implements ICQueue {
     public void add(Task task) {
         try {
             this.lock.lock();
-            Boolean accept = true;
-            final List<ICQueueFilter> queueFilters = new ArrayList<ICQueueFilter>(filters);
-            for (int i = queueFilters.size()-1; i >=0; i--) {
-                if (!queueFilters.get(i).accept(task)) {
-                    accept = false;
-                    log.info("{}: task was not accept by {}", LogUtils.getQueueTagColor("queue"), queueFilters.get(i).getClass());
-                    break;
+            Boolean accept = !this.filters.stream().anyMatch(filter -> {
+                boolean itemAccept = filter.accept(task);
+                if (!itemAccept) {
+                    log.info("{}: {} was not accepted by {}", LogUtils.getQueueTagColor("queue"), task, filter.getClass());
                 }
-            }
+                return !itemAccept;
+            });
             if (accept) {
                 if (this.limitSize > 0) {
                     while (this.queue.size() >= this.limitSize) {
@@ -122,12 +132,10 @@ public class QueueHandler implements ICQueue {
                     }
                     this.queue.add(task);
                     log.debug("{}: add task: {}",LogUtils.getQueueTagColor("queue"),task);
-                    AsyncUtils.doVoidMethodAsync(() -> listener.add(task));
                     this.condition.signalAll();
                 } else {
                     this.queue.add(task);
                     log.debug("{}: add task: {}",LogUtils.getQueueTagColor("queue"),task);
-                    AsyncUtils.doVoidMethodAsync(() -> listener.add(task));
                 }
             }
         } catch (InterruptedException e) {

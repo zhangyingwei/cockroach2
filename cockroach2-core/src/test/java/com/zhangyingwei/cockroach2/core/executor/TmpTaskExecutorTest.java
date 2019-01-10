@@ -6,18 +6,13 @@ import static org.junit.Assert.*;
 
 /**
  * @author zhangyw
- * @date: 2018/12/13
+ * @date: 2019/1/10
  * @desc:
  */
-public class ExecuterManagerTest {
+public class TmpTaskExecutorTest {
 
     @Test
-    public void start() {
-        //TODO
-    }
-
-    @Test
-    public void stop() {
+    public void run() {
         //TODO
     }
 }

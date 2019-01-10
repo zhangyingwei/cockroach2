@@ -1,16 +1,12 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
 import com.zhangyingwei.cockroach2.common.Constants;
-import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.common.utils.LogUtils;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
-import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
-import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import lombok.extern.slf4j.Slf4j;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -109,21 +105,23 @@ public class ExecutorMonitor implements Runnable {
     private void executorStatusMonitor(int numThread) throws IllegalAccessException, InstantiationException {
         ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) this.service;
         int activeCount = poolExecutor.getActiveCount();
+        int runningExecutor = this.executorList.stream().filter(taskExecutor -> TaskExecutor.State.RUNNING.equals(taskExecutor.getState())).collect(Collectors.toList()).size();
         int waitingExecutor = this.executorList.stream()
                 .map(executor -> executor.getThreadState())
                 .filter(state -> Thread.State.WAITING.equals(state))
                 .collect(Collectors.toList()).size();
         if (waitingExecutor == this.executorList.size() || (numThread - waitingExecutor) < numThread / 2) {
             if (queue.size() > 0) {
-//                int tmpNumTherad = numThread == 1 ? 1 : numThread / 2;
                 int tmpNumTherad = numThread;
                 for (int i = 0; i < tmpNumTherad; i++) {
-                    this.service.execute(this.executorFactory.createExecutor(ExecutorFactory.Type.TMP_TASK_EXECUTOR));
+                    TaskExecutor tmpTaskExecutor = this.executorFactory.createExecutor(ExecutorFactory.Type.TMP_TASK_EXECUTOR);
+                    this.service.execute(tmpTaskExecutor);
+                    this.executorList.add(tmpTaskExecutor);
                 }
                 log.info(LogUtils.getLineColot("submit {} tmp executor!"), tmpNumTherad);
             }
         }
-        if (activeCount == 0) {
+        if (activeCount == 0 && runningExecutor == 0) {
             if (!queue.getWithBlock() && !service.isShutdown()) {
                 service.shutdown();
                 log.debug(LogUtils.getLineColot("main service shutdown!"));

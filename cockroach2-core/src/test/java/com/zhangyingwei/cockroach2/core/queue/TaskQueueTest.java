@@ -31,7 +31,7 @@ public class TaskQueueTest {
     }
 
     public static void main(String[] args) {
-        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue(10).limit(10L).withBlock(true);
+        QueueHandler queueHandler = new QueueHandler.Builder(10).limit(10L).withBlock(true).build();
         new Thread(() -> {
             while (true) {
                 try {

@@ -14,7 +14,7 @@ public class CockroachContextTest {
                 .threadSeep(100)
                 .store(HtmlTitleStore.class);
         CockroachContext context = new CockroachContext(config);
-        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue().withBlock(false);
+        QueueHandler queueHandler = new QueueHandler.Builder().withBlock(false).build();
         for (int i = 0; i < 10; i++) {
             queueHandler.add(new Task("http://zhangyingwei.com"));
         }
@@ -29,10 +29,15 @@ public class CockroachContextTest {
                 .numThread(2)
                 .store(HtmlTitleStore.class).runWithJunit();
         CockroachContext context = new CockroachContext(config);
-        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue().withBlock(false);
+        QueueHandler queueHandler = new QueueHandler.Builder().withBlock(false).build();
         for (int i = 0; i < 10; i++) {
             queueHandler.add(new Task("http://zhangyingwei.com"));
         }
         context.start(queueHandler);
+    }
+
+    @Test
+    public void start() {
+        //TODO
     }
 }

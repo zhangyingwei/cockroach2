@@ -1,16 +1,11 @@
 package com.zhangyingwei.cockroach2.core.executor;
 
-import com.zhangyingwei.cockroach2.common.Task;
-import com.zhangyingwei.cockroach2.common.async.AsyncUtils;
+import com.zhangyingwei.cockroach2.common.async.AsyncManager;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
-import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
 import com.zhangyingwei.cockroach2.core.listener.ApplicationListener;
-import com.zhangyingwei.cockroach2.core.listener.ICListener;
-import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
-import com.zhangyingwei.cockroach2.http.params.IHeaderGenerator;
 import lombok.extern.slf4j.Slf4j;
-import java.lang.reflect.InvocationTargetException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -28,9 +23,11 @@ public class ExecuterManager {
     private ApplicationListener applicationListener;
     private CountDownLatch latch = new CountDownLatch(1);
     private ExecutorFactory executorFactory;
+    private AsyncManager asyncManager;
 
     public ExecuterManager(CockroachConfig config) {
         this.config = config;
+        this.asyncManager = config.getAsyncManager();
         this.applicationListener = new ApplicationListener(this.config);
     }
 
@@ -57,13 +54,13 @@ public class ExecuterManager {
             try {
                 while (true) {
                     if (this.service.isTerminated()) {
-                        AsyncUtils.shutdown();
+                        this.asyncManager.shutdown();
                         break;
                     }
                     TimeUnit.SECONDS.sleep(1);
                 }
                 while (true) {
-                    if (AsyncUtils.isTerminated()) {
+                    if (this.asyncManager.isTerminated()) {
                         this.applicationListener.onStop();
                         this.config.getLogMsgHandler().shutdown();
                         break;

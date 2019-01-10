@@ -8,7 +8,7 @@ import com.zhangyingwei.cockroach2.core.store.HtmlTitleStore;
 
 public class CockroachHeaderGeneratosTest {
     public static void main(String[] args) {
-        QueueHandler queue = QueueHandler.initWithDefaultQueue().withBlock(false);
+        QueueHandler queue = new QueueHandler.Builder().withBlock(false).build();
         queue.add(new Task("http://zhangyingwei.com"));
         new CockroachContext(
                 new CockroachConfig().appName("header generator test").numThread(1).store(HtmlTitleStore.class)

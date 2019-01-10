@@ -21,7 +21,7 @@ public class HeaderGeneratorApplication {
                 .store(HtmlTitleStore.class)
                 .headerGenerator(HeaderGeneratorApplication.MyHeaderGenerator.class);
         CockroachContext context = new CockroachContext(config);
-        QueueHandler queueHandler = QueueHandler.initWithDefaultQueue().withBlock(false);
+        QueueHandler queueHandler = new QueueHandler.Builder().withBlock(false).build();
         for (int i = 0; i < 10; i++) {
             queueHandler.add(new Task("https://baidu.com"));
         }
