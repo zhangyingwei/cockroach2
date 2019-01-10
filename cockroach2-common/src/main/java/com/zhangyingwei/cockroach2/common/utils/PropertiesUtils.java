@@ -11,8 +11,8 @@ import java.util.Properties;
  * @desc:
  */
 public class PropertiesUtils {
-    public static <T> T getOrDefault(Properties properties, String key, Object defaultValue) {
-        return (T)properties.getOrDefault(key, defaultValue);
+    public static String getOrDefault(Properties properties, String key, Object defaultValue) {
+        return (String) properties.getOrDefault(key, defaultValue);
     }
 
     public static Properties load(String path) throws IOException {

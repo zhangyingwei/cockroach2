@@ -18,4 +18,5 @@ public class ConfigConstants {
     public static final String KEY_CONFIG_HTTPCLIENT = "app.http.client";
     public static final Object HTTPCLIENT = "com.zhangyingwei.cockroach2.http.okhttp.COkHttpClient";
     public static final String KEY_CONFIG_LOGCONSUMERS = "app.log.consumers";
+    public static final String KEY_CONFIG_THREADSLEEPMIN = "app.thread.sleep.min";
 }

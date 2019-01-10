@@ -16,7 +16,7 @@ import com.zhangyingwei.cockroach2.samples.slidestalk.store.MainStore;
  * @date: 2018/12/14
  * @desc:
  */
-public class Applicatoin {
+public class Application {
     public static void main(String[] args) {
         CockroachConfig config = new CockroachConfig()
                 .appName("示说网爬虫")

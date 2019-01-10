@@ -81,8 +81,15 @@ public class CockroachConfig {
      */
     public CockroachConfig(Properties properties) throws ClassNotFoundException {
         this.appName(PropertiesUtils.getOrDefault(properties,ConfigConstants.KEY_CONFIG_APPNAME,NameUtil.getName()));
-        this.threadSeep(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_THREADSLEEP, ConfigConstants.THREAD_SLEEP));
-        this.numThread(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_NUMTHREAD, ConfigConstants.THREAD_NUM));
+        this.threadSeep(
+                Integer.valueOf(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_THREADSLEEP, ConfigConstants.THREAD_SLEEP))
+        );
+        this.threadSeepMin(
+                Integer.valueOf(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_THREADSLEEPMIN, null))
+        );
+        this.numThread(
+                Integer.valueOf(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_NUMTHREAD, ConfigConstants.THREAD_NUM))
+        );
         this.store(ClassUtils.getOrNullClass(
                 PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_STORE, ConfigConstants.STORE)
         ));
@@ -126,13 +133,13 @@ public class CockroachConfig {
         return this;
     }
 
-    public CockroachConfig threadSeep(int sleep) {
-        this.threadSleep = sleep;
+    public CockroachConfig threadSeep(Integer sleep) {
+        this.threadSleep = Integer.valueOf(sleep);
         return this;
     }
 
-    public CockroachConfig threadSeepMin(int sleep) {
-        this.minThreadSleep = sleep;
+    public CockroachConfig threadSeepMin(Integer sleep) {
+        this.minThreadSleep = Integer.valueOf(sleep);
         return this;
     }
 
