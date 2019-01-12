@@ -122,6 +122,7 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
         this.currentThread = Thread.currentThread();
         asyncManager.doVoidMethodAsync(() -> taskExecuteListener.start(this.getName()));
         try {
+            this.taskExecuteListener.executorRunning(this.getName());
             Task task = this.execute();
             while (keepRun && task != null) {
                 task = this.execute();

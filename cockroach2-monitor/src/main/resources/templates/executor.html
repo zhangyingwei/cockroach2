@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../static/css/bulma.min.css">
-    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="css/bulma.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <script type="application/javascript" src="js/jquery.min.js"></script>
     <title>Cockroach2 Moniter - Executor</title>
 </head>
 <body>
@@ -18,7 +19,7 @@
             <div id="navbarBasicExample" class="navbar-menu">
               <div class="navbar-start">
                 <a class="navbar-item" href="/">Home</a>
-                <a class="navbar-item" href="/queue">Queue</a>
+                <!--<a class="navbar-item" href="/queue">Queue</a>-->
                 <a class="navbar-item" href="/task">Task</a>
                 <a class="navbar-item is-active" href="/executor">Executor</a>
               </div>
@@ -31,58 +32,52 @@
                     <div class="level-item has-text-centered">
                         <div>
                             <p class="heading">executor count</p>
-                            <p class="title">3456</p>
+                            <p class="title" id="executorcount">0</p>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
-                            <p class="heading">block count</p>
-                            <p class="title">132</p>
-                        </div>
-                    </div>
-                    <div class="level-item has-text-centered">
-                        <div>
-                            <p class="heading">active count</p>
-                            <p class="title">132</p>
+                            <p class="heading">running count</p>
+                            <p class="title" id="executorrunning">0</p>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
                             <p class="heading">finish count</p>
-                            <p class="title">1</p>
+                            <p class="title" id="executorend">1</p>
                         </div>
                     </div>
                 </nav>
         </div>
 
-        <div class="columns">
-            <div class="column">
-                <div class="tile">
-                    <div class="tile is-parent is-vertical">
-                      <article class="tile is-child notification is-primary">
-                        <p class="title is-3">Executor 执行详情</p>
-                        <p class="content">
-                            <ul>
-                                <li>
-                                    <div class="columns">
-                                        <div class="column is-1">executor-1</div>
-                                        <div class="column is-11"><progress class="progress is-info" value="45" max="1000"></progress></div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="columns">
-                                        <div class="column is-1">executor-2</div>
-                                        <div class="column is-11"><progress class="progress is-info" value="45" max="1000"></progress></div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </p>
-                      </article>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!--<div class="columns">-->
+            <!--<div class="column">-->
+                <!--<div class="tile">-->
+                    <!--<div class="tile is-parent is-vertical">-->
+                      <!--<article class="tile is-child notification is-primary">-->
+                        <!--<p class="title is-3">Executor 执行详情</p>-->
+                        <!--<p class="content">-->
+                            <!--<ul id="executorList">-->
+                                <!--&lt;!&ndash;<li>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="columns">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="column is-1">executor-1</div>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="column is-11"><progress class="progress is-info" value="45" max="1000"></progress></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                                <!--&lt;!&ndash;<li>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;<div class="columns">&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="column is-1">executor-2</div>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<div class="column is-11"><progress class="progress is-info" value="45" max="1000"></progress></div>&ndash;&gt;-->
+                                    <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                                <!--&lt;!&ndash;</li>&ndash;&gt;-->
+                            <!--</ul>-->
+                        <!--</p>-->
+                      <!--</article>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
     </div>
-    
 </body>
+<script type="application/javascript" src="js/executor.js"></script>
 </html>

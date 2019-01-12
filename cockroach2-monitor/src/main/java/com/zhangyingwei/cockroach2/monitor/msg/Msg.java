@@ -1,12 +1,7 @@
 package com.zhangyingwei.cockroach2.monitor.msg;
 
-import com.zhangyingwei.cockroach2.common.Constants;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
-import lombok.val;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,6 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 谁 什么时间 做了什么事
  */
+
+@EqualsAndHashCode
 public class Msg {
     private final String uuid = UUID.randomUUID().toString();
     /**
@@ -61,7 +58,7 @@ public class Msg {
         TASK_ACTION("task.action"),
 
         EXECUTOR_ACTION("executor.action"),
-        EXECUTOR_TIMESTAMP("executor.timestamp");
+        EXECUTOR_TIMESTAMP("executor.timestamp"), EXECUTOR_STATE("executor.state");
 
         @Getter
         private final String value;

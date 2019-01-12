@@ -1,5 +1,6 @@
 package com.zhangyingwei.cockroach2.db;
 
+import com.zhangyingwei.cockroach2.utils.ListComparator;
 import com.zhangyingwei.cockroach2.utils.ListFilter;
 
 import java.util.ArrayList;
@@ -32,6 +33,11 @@ public class CockroachDb implements ICockroachDb{
     }
 
     @Override
+    public Long subtract(String key) {
+        return this.dbManager.subtract(key);
+    }
+
+    @Override
     public Long getAcc(String key) {
         Future<Long> future = readWorkers.submit(() -> {
             return this.dbManager.getAcc(key);
@@ -57,6 +63,12 @@ public class CockroachDb implements ICockroachDb{
     @Override
     public void putInList(String key, Object value) {
         this.dbManager.putInList(key, value);
+    }
+
+
+    @Override
+    public void replaceInList(String key, Object value, Comparator comparator) {
+        this.dbManager.replaceInList(key, value, comparator);
     }
 
     @Override

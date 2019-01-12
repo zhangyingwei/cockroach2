@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../static/css/bulma.min.css">
-    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="css/bulma.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <script type="application/javascript" src="js/jquery.min.js"></script>
     <title>Cockroach2 Moniter</title>
 </head>
 <body>
@@ -18,9 +19,9 @@
             <div id="navbarBasicExample" class="navbar-menu">
               <div class="navbar-start">
                 <a class="navbar-item is-active" href="/">Home</a>
-                <a class="navbar-item" href="/queue">Queue</a>
+                <!--<a class="navbar-item" href="/queue">Queue</a>-->
                 <a class="navbar-item" href="/task">Task</a>
-                <a class="navbar-item" href="/executor">Executor</a>
+                <!--<a class="navbar-item" href="/executor">Executor</a>-->
               </div>
             </div>
           </nav>
@@ -31,30 +32,13 @@
                 <div class="tile">
                     <div class="tile is-parent is-vertical">
                       <article class="tile is-child notification is-primary">
-                        <p class="title">Queue</p>
-                        <p class="content">
-                            <ul>
-                                <li>开始时间</li>
-                                <li>初始化长度</li>
-                                <li>是否阻塞</li>
-                                <li>当前长度</li>
-                            </ul>
-                        </p>
-                      </article>
-                    </div>
-                </div>
-            </div>
-            <div class="column">
-                <div class="tile">
-                    <div class="tile is-parent is-vertical">
-                      <article class="tile is-child notification is-primary">
                         <p class="title">Task</p>
                         <p class="content">
                             <ul>
-                                <li>总数</li>
-                                <li>正在执行</li>
-                                <li>完成</li>
-                                <li>失败</li>
+                                <li>总数 : <span id="taskcount">0</span></li>
+                                <li>正在执行 : <span id="taskrunning">0</span></li>
+                                <li>完成 : <span id="tasksuccess">0</span></li>
+                                <li>失败 : <span id="taskfailed">0</span></li>
                             </ul>
                         </p>
                       </article>
@@ -68,7 +52,8 @@
                         <p class="title">Executor</p>
                         <p class="content">
                             <ul>
-                                <li>数量</li>
+                                <li>正在执行: <span id="executorrunning">0</span></li>
+                                <li>执行完毕: <span id="executorend">0</span></li>
                             </ul>
                         </p>
                       </article>
@@ -78,4 +63,5 @@
           </div>
     </div>
 </body>
+<script type="application/javascript" src="js/index.js"></script>
 </html>

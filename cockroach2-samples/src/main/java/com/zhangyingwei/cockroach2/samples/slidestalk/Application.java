@@ -6,6 +6,7 @@ import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import com.zhangyingwei.cockroach2.monitor.msg.LogMsgHandler;
 import com.zhangyingwei.cockroach2.monitor.msg.Msg;
+import com.zhangyingwei.cockroach2.monitor.msg.consumer.CockroachMonitorConsumer;
 import com.zhangyingwei.cockroach2.monitor.msg.consumer.CockroachTaskConsumer;
 import com.zhangyingwei.cockroach2.monitor.msg.consumer.DefaultCockroachConsumer;
 import com.zhangyingwei.cockroach2.monitor.msg.consumer.ICMsgConsumer;
@@ -20,10 +21,11 @@ public class Application {
     public static void main(String[] args) {
         CockroachConfig config = new CockroachConfig()
                 .appName("示说网爬虫")
-                .threadSeep(500)
+                .threadSeep(1000)
+                .threadSeepMin(300)
                 .numThread(8)
                 .store(MainStore.class)
-                .addLogConsumer(CockroachTaskConsumer.class);
+                .addLogConsumer(CockroachMonitorConsumer.class);
         CockroachContext context = new CockroachContext(config);
         context.start(getQueue());
     }

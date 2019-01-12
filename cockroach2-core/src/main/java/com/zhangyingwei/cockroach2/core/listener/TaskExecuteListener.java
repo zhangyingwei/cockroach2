@@ -94,4 +94,11 @@ public class TaskExecuteListener implements ICListener<Task> {
         msg.addMsg(Msg.Keys.EXECUTOR_TIMESTAMP, System.currentTimeMillis());
         config.getLogMsgHandler().produce(msg);
     }
+
+    public void executorRunning(final String name) {
+        Msg msg = new Msg(name, Msg.Group.EXECUTOR);
+        msg.addMsg(Msg.Keys.EXECUTOR_ACTION, "execute");
+        msg.addMsg(Msg.Keys.EXECUTOR_TIMESTAMP, System.currentTimeMillis());
+        config.getLogMsgHandler().produce(msg);
+    }
 }

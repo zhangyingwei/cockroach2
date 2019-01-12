@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="../static/css/bulma.min.css">
-    <link rel="stylesheet" href="../static/css/index.css">
+    <link rel="stylesheet" href="css/bulma.min.css">
+    <link rel="stylesheet" href="css/index.css">
+    <script type="application/javascript" src="js/jquery.min.js"></script>
     <title>Cockroach2 Moniter - Task</title>
 </head>
 <body>
@@ -18,9 +19,9 @@
             <div id="navbarBasicExample" class="navbar-menu">
               <div class="navbar-start">
                 <a class="navbar-item" href="/">Home</a>
-                <a class="navbar-item" href="/queue">Queue</a>
+                <!--<a class="navbar-item" href="/queue">Queue</a>-->
                 <a class="navbar-item is-active" href="/task">Task</a>
-                <a class="navbar-item" href="/executor">Executor</a>
+                <!--<a class="navbar-item" href="/executor">Executor</a>-->
               </div>
             </div>
           </nav>
@@ -31,25 +32,25 @@
                     <div class="level-item has-text-centered">
                         <div>
                             <p class="heading">task count</p>
-                            <p class="title">3456</p>
+                            <p class="title" id="taskcount">0</p>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
                             <p class="heading">exeute count</p>
-                            <p class="title">132</p>
+                            <p class="title" id="taskrunning">0</p>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
                             <p class="heading">success count</p>
-                            <p class="title">132</p>
+                            <p class="title" id="tasksuccess">0</p>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
                             <p class="heading">failed count</p>
-                            <p class="title">1</p>
+                            <p class="title" id="taskfailed">0</p>
                         </div>
                     </div>
                 </nav>
@@ -62,33 +63,47 @@
                       <article class="tile is-child notification is-primary">
                         <p class="title is-3">Task 分类统计信息</p>
                         <p class="content">
-                            <ul>
-                                <li>
-                                    <div class="columns">
-                                        <div class="column is-3">分类1</div>
-                                        <div class="column is-9">123</div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="columns">
-                                        <div class="column is-3">分类1</div>
-                                        <div class="column is-9">123</div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="columns">
-                                        <div class="column is-3">分类1</div>
-                                        <div class="column is-9">123</div>
-                                    </div>
-                                </li>
+                            <ul id="taskgroup">
+                                <!--<li>-->
+                                    <!--<div class="columns">-->
+                                        <!--<div class="column is-3">分类1</div>-->
+                                        <!--<div class="column is-9">123</div>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+                                <!--<li>-->
+                                    <!--<div class="columns">-->
+                                        <!--<div class="column is-3">分类1</div>-->
+                                        <!--<div class="column is-9">123</div>-->
+                                    <!--</div>-->
+                                <!--</li>-->
+                                <!--<li>-->
+                                    <!--<div class="columns">-->
+                                        <!--<div class="column is-3">分类1</div>-->
+                                        <!--<div class="column is-9">123</div>-->
+                                    <!--</div>-->
+                                <!--</li>-->
                             </ul>
                         </p>
                       </article>
                     </div>
                 </div>
             </div>
+            <div class="column is-8">
+                <div class="tile">
+                    <div class="tile is-parent is-vertical">
+                        <article class="tile is-child notification is-primary">
+                            <p class="content">
+                            <ul id="taskurls">
+                                <!--<li>-->
+                                <!--</li>-->
+                            </ul>
+                            </p>
+                        </article>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    
 </body>
+<script type="application/javascript" src="js/task.js"></script>
 </html>

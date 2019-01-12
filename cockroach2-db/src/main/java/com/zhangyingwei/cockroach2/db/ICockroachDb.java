@@ -1,5 +1,6 @@
 package com.zhangyingwei.cockroach2.db;
 
+import com.zhangyingwei.cockroach2.utils.ListComparator;
 import com.zhangyingwei.cockroach2.utils.ListFilter;
 
 import java.util.Comparator;
@@ -19,6 +20,13 @@ public interface ICockroachDb {
      * @return
      */
     public Long accumulator(String key);
+
+    /**
+     * 减少
+     * @param key
+     * @return
+     */
+    public Long subtract(String key);
 
     /**
      * 累加器
@@ -48,7 +56,14 @@ public interface ICockroachDb {
      * @param key
      * @param value
      */
-    public void putInList(String key,Object value);
+    void putInList(String key,Object value);
+
+    /**
+     * 替换list中的值
+     * @param key
+     * @param value
+     */
+    void replaceInList(String key, Object value, Comparator comparator);
 
     /**
      * 根据 key 获取 value
