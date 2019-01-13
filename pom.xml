@@ -13,20 +13,20 @@
         <argLine>-Dfile.encoding=UTF-8</argLine>
     </properties>
 
-    <groupId>com.zhangyingwei.cockroach</groupId>
+    <groupId>com.zhangyingwei.cockroach2</groupId>
     <artifactId>cockroach2</artifactId>
     <packaging>pom</packaging>
     <version>${cockroach2.version}</version>
 
     <modules>
         <module>cockroach2-core</module>
-        <module>cockroach2-samples</module>
         <module>cockroach2-common</module>
         <module>cockroach2-queue</module>
         <module>cockroach2-http</module>
         <module>cockroach2-session</module>
         <module>cockroach2-monitor</module>
         <module>cockroach2-db</module>
+        <module>cockroach2-samples</module>
     </modules>
 
     <dependencies>

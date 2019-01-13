@@ -10,6 +10,7 @@ public class CockroachHttpServerTest {
     public void start() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
         new CockroachHttpServer().start();
+        latch.countDown();
         latch.await();
     }
 }

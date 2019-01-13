@@ -84,9 +84,8 @@ public class CockroachConfig {
         this.threadSeep(
                 Integer.valueOf(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_THREADSLEEP, ConfigConstants.THREAD_SLEEP))
         );
-        this.threadSeepMin(
-                Integer.valueOf(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_THREADSLEEPMIN, null))
-        );
+        String value = PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_THREADSLEEPMIN, null);
+        this.threadSeepMin(value == null ? null : Integer.valueOf(value));
         this.numThread(
                 Integer.valueOf(PropertiesUtils.getOrDefault(properties, ConfigConstants.KEY_CONFIG_NUMTHREAD, ConfigConstants.THREAD_NUM))
         );
@@ -139,7 +138,7 @@ public class CockroachConfig {
     }
 
     public CockroachConfig threadSeepMin(Integer sleep) {
-        this.minThreadSleep = Integer.valueOf(sleep);
+        this.minThreadSleep = sleep == null ? null : Integer.valueOf(sleep);
         return this;
     }
 
