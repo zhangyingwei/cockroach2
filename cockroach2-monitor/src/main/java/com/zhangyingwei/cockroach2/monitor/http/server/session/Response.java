@@ -34,6 +34,13 @@ public class Response {
 //        this.writer.println(String.format("%s %s", HeaderKey.CONNECTION.getKey(), "Keep-Alive"));
 //        this.writer.println(String.format("%s %s", HeaderKey.CONTENT_ENCODING.getKey(), "gzip"));
 //        this.writer.println(String.format("%s %s", HeaderKey.CONTENT_TYPE.getKey(), this.header.getContentType()));
+        if (request.getPath().endsWith(".css")) {
+            this.writer.println(String.format("%s %s", HeaderKey.CONTENT_TYPE.getKey(), "text/css"));
+        } else if (request.getPath().endsWith(".js")) {
+            this.writer.println(String.format("%s %s", HeaderKey.CONTENT_TYPE.getKey(), "application/x-javascript"));
+        } else if (request.getPath().endsWith(".html")) {
+            this.writer.println(String.format("%s %s", HeaderKey.CONTENT_TYPE.getKey(), "text/html"));
+        }
     }
 
     public Response resourcesNotFound() {

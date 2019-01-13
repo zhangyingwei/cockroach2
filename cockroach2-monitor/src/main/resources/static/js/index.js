@@ -1,16 +1,34 @@
 console.log("hello cockroach");
 
-$(function() {
+$(function () {
+    var taskinfos = new Vue({
+        el: '#taskinfos',
+        data: {
+            count: 1,
+            running: 2,
+            success: 3,
+            failed: 4
+        }
+    });
+
+    var executorinof = new Vue({
+        el: "#executorinfo",
+        data: {
+            running: 5,
+            end: 6
+        }
+    });
+
     function getTaskInfo() {
         $.ajax({
             type: "get",
             url: "/index/taskinfo",
-            success: function(data) {
+            success: function (data) {
                 var json = JSON.parse(data);
-                $("#taskcount").html(json.taskcount);
-                $("#taskrunning").html(json.taskrunning);
-                $("#tasksuccess").html(json.tasksuccess);
-                $("#taskfailed").html(json.taskfailed);
+                taskinfos.count = json.taskcount;
+                taskinfos.running = json.taskrunning;
+                taskinfos.success = json.tasksuccess;
+                taskinfos.failed = json.taskfailed;
             }
         })
     }
@@ -19,10 +37,10 @@ $(function() {
         $.ajax({
             type: "get",
             url: "/index/executorinfo",
-            success: function(data) {
+            success: function (data) {
                 var json = JSON.parse(data);
-                $("#executorrunning").html(json.executorrunning);
-                $("#executorend").html(json.executorend);
+                executorinof.running = json.executorrunning;
+                executorinof.end = json.executorend;
             }
         })
     }
@@ -31,4 +49,4 @@ $(function() {
         getTaskInfo();
         getExecutorInfo();
     }, 1000);
-})
+});

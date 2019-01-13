@@ -11,5 +11,12 @@
 
     <artifactId>cockroach2-db</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.zhangyingwei.cockroach</groupId>
+            <artifactId>cockroach2-common</artifactId>
+            <version>${cockroach2.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -94,7 +94,15 @@ public class CockroachMonitorConsumer implements ICMsgConsumer {
                 this.cockroachDb.subtract("taskRunning");
                 break;
             }
+            case "after": {
+                break;
+            }
+            case "store": {
+                break;
+            }
             default: {
+                System.out.println("@@@@@@@@@@@@@@@@@@@:"+msg.getMsgOf(Msg.Keys.TASK_ACTION));
+                this.cockroachDb.subtract("taskRunning");
                 break;
             }
         }

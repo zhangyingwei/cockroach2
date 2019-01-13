@@ -1,5 +1,6 @@
 package com.zhangyingwei.cockroach2.db;
 
+import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.utils.ListComparator;
 import com.zhangyingwei.cockroach2.utils.ListFilter;
 
@@ -22,6 +23,7 @@ public class CockroachDb implements ICockroachDb{
         @Override
         public Thread newThread(Runnable runnable) {
             Thread thread = new Thread(runnable);
+            thread.setName("cockroach-db-"+ IdUtils.getId(CockroachDb.class.getName()));
             thread.setDaemon(true);
             return thread;
         }

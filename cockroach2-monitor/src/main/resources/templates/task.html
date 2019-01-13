@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/bulma.min.css">
     <link rel="stylesheet" href="css/index.css">
+    <script type="application/javascript" src="js/vue.js"></script>
     <script type="application/javascript" src="js/jquery.min.js"></script>
     <title>Cockroach2 Moniter - Task</title>
 </head>
@@ -26,31 +27,31 @@
             </div>
           </nav>
     </div>
-    <div class="container is-fluid">
+    <div class="container is-fluid" id="taskpage" >
         <div class="panel">
                 <nav class="level notification page-content">
                     <div class="level-item has-text-centered">
                         <div>
                             <p class="heading">task count</p>
-                            <p class="title" id="taskcount">0</p>
+                            <p class="title" v-text="count">0</p>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
-                            <p class="heading">exeute count</p>
-                            <p class="title" id="taskrunning">0</p>
+                            <p class="heading">running</p>
+                            <p class="title" v-text="running">0</p>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
-                            <p class="heading">success count</p>
-                            <p class="title" id="tasksuccess">0</p>
+                            <p class="heading">success</p>
+                            <p class="title" v-text="success">0</p>
                         </div>
                     </div>
                     <div class="level-item has-text-centered">
                         <div>
-                            <p class="heading">failed count</p>
-                            <p class="title" id="taskfailed">0</p>
+                            <p class="heading">failed</p>
+                            <p class="title" v-text="failed">0</p>
                         </div>
                     </div>
                 </nav>
@@ -63,13 +64,13 @@
                       <article class="tile is-child notification is-primary">
                         <p class="title is-3">Task 分类统计信息</p>
                         <p class="content">
-                            <ul id="taskgroup">
-                                <!--<li>-->
-                                    <!--<div class="columns">-->
-                                        <!--<div class="column is-3">分类1</div>-->
-                                        <!--<div class="column is-9">123</div>-->
-                                    <!--</div>-->
-                                <!--</li>-->
+                            <ul>
+                                <li v-for="(k,v) in groups" >
+                                    <div class="columns">
+                                        <div class="column is-3" v-text="v"></div>
+                                        <div class="column is-9" v-text="k"></div>
+                                    </div>
+                                </li>
                                 <!--<li>-->
                                     <!--<div class="columns">-->
                                         <!--<div class="column is-3">分类1</div>-->
@@ -93,10 +94,13 @@
                     <div class="tile is-parent is-vertical">
                         <article class="tile is-child notification is-primary">
                             <p class="content">
-                            <ul id="taskurls">
-                                <!--<li>-->
-                                <!--</li>-->
-                            </ul>
+                                <ul style="font-size: 15px;">
+                                    <li v-for="(msg,index) in urls">
+                                        <span v-text='msg.name' style="background-color: #ffd324;border-radius: 2px; padding-right: 2px;"></span>
+                                        <span v-text='msg.msgMap["task.req.type"]' style="background-color: #ffd324;border-radius: 2px; padding-right: 2px;"></span>
+                                        <a target="_blank" v-bind:href="msg.msgMap['task.url']" v-text="msg.msgMap['task.url']"></a>
+                                    </li>
+                                </ul>
                             </p>
                         </article>
                     </div>

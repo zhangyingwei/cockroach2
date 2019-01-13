@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="css/bulma.min.css">
     <link rel="stylesheet" href="css/index.css">
+    <script type="application/javascript" src="js/vue.js"></script>
     <script type="application/javascript" src="js/jquery.min.js"></script>
     <title>Cockroach2 Moniter</title>
 </head>
@@ -34,11 +35,11 @@
                       <article class="tile is-child notification is-primary">
                         <p class="title">Task</p>
                         <p class="content">
-                            <ul>
-                                <li>总数 : <span id="taskcount">0</span></li>
-                                <li>正在执行 : <span id="taskrunning">0</span></li>
-                                <li>完成 : <span id="tasksuccess">0</span></li>
-                                <li>失败 : <span id="taskfailed">0</span></li>
+                            <ul id="taskinfos">
+                                <li>总数 : <span v-text="count">0</span></li>
+                                <li>正在执行 : <span v-text="running">0</span></li>
+                                <li>完成 : <span v-text="success">0</span></li>
+                                <li>失败 : <span v-text="failed">{{failed}}</span></li>
                             </ul>
                         </p>
                       </article>
@@ -50,10 +51,10 @@
                     <div class="tile is-parent is-vertical">
                       <article class="tile is-child notification is-primary">
                         <p class="title">Executor</p>
-                        <p class="content">
-                            <ul>
-                                <li>正在执行: <span id="executorrunning">0</span></li>
-                                <li>执行完毕: <span id="executorend">0</span></li>
+                        <p class="content" >
+                            <ul id="executorinfo">
+                                <li>正在执行: <span id="executorrunning" v-text="running">0</span></li>
+                                <li>执行完毕: <span id="executorend" v-text="end">0</span></li>
                             </ul>
                         </p>
                       </article>

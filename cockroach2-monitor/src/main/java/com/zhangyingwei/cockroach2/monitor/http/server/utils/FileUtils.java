@@ -10,7 +10,7 @@ public class FileUtils {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
-            String result = reader.lines().collect(Collectors.joining());
+            String result = reader.lines().collect(Collectors.joining("\n"));
             return result;
         }finally {
             if (reader != null) {

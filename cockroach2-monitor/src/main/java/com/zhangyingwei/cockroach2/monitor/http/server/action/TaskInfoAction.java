@@ -32,7 +32,7 @@ public class TaskInfoAction implements ICAction {
             taskGropu.put(msg.getMsgOf(Msg.Keys.TASK_GROUP)+"", ++count);
         }
         resultData.put("taskgroup", taskGropu);
-        List<String> taskUrls = taskList.stream().map(msg -> msg.getMsgOf(Msg.Keys.TASK_URL).toString()).collect(Collectors.toList());
+        List<Object> taskUrls = taskList.stream().collect(Collectors.toList());
         Collections.reverse(taskUrls);
         resultData.put("taskurls", taskUrls);
         return JSONObject.fromObject(resultData).toString();

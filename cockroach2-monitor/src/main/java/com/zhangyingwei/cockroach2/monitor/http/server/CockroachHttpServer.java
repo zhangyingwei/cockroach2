@@ -1,5 +1,6 @@
 package com.zhangyingwei.cockroach2.monitor.http.server;
 
+import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.common.utils.LogUtils;
 import com.zhangyingwei.cockroach2.monitor.http.server.action.ICAction;
 import com.zhangyingwei.cockroach2.monitor.http.server.exception.MethodNotMatchException;
@@ -33,6 +34,7 @@ public class CockroachHttpServer {
     public CockroachHttpServer() {
         this.httpThread = new Thread(new HttpWorker());
         this.httpThread.setDaemon(true);
+        this.httpThread.setName("cuckroach-http-"+IdUtils.getId(CockroachHttpServer.class.getName()));
 //        System.out.println(resourceBasePath);
     }
 
@@ -82,6 +84,7 @@ public class CockroachHttpServer {
         public void run() {
             ExecutorService workers = Executors.newFixedThreadPool(10, (runnable) -> {
                 Thread thread = new Thread(runnable);
+                thread.setName("request-worker-"+ IdUtils.getId(RequestWorker.class.getName()));
                 thread.setDaemon(true);
                 return thread;
             });
