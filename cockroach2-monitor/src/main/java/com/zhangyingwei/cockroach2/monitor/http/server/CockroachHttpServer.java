@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -20,16 +21,9 @@ import java.util.concurrent.ThreadFactory;
 @Slf4j
 public class CockroachHttpServer {
     private Thread httpThread;
-    private String resourceBasePath = this.getResoucesPath();
-    private String staticBasePath = resourceBasePath.concat("/static");
-    private String templateBasePath = resourceBasePath.concat("/templates/");
+    private URL staticBasePath = CockroachHttpServer.class.getResource("/static");
+    private URL templateBasePath = CockroachHttpServer.class.getResource("/templates");
     private Map<String, ICAction> actionMap = new ConcurrentHashMap<String, ICAction>();
-
-    private String getResoucesPath() {
-        String classFilePath = CockroachHttpServer.class.getResource("").getPath();
-        File classFile = new File(classFilePath);
-        return classFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getAbsolutePath();
-    }
 
     public CockroachHttpServer() {
         this.httpThread = new Thread(new HttpWorker());
@@ -130,13 +124,13 @@ public class CockroachHttpServer {
 
             private void doResponse(Request request, Response response) {
                 String path = request.getPath();
-                String staticPath = staticBasePath.concat(path);
+                String staticPath = staticBasePath.getPath().concat(File.separator).concat(path);
                 ICAction action = actionMap.get(path);
                 try {
                     if (action != null) {
                         response.resourcesOk();
                         String result = action.doAction(request, response);
-                        String htmlPath = templateBasePath.concat(result);
+                        String htmlPath = templateBasePath.getPath().concat(File.separator).concat(result);
                         if (response.getHeader().getContentType().contains("text/html")) {
                             response.getWriter().println(FileUtils.getContent(htmlPath));
                         } else if (response.getHeader().getContentType().contains("application/json")) {
