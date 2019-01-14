@@ -51,6 +51,12 @@ public class CockroachContextTest {
 
 代码中通过监听器把一系列操作以日志的形式发送到日志队列。消费日志队列即可得到程序的运行情况。添加监控程序的日志消费者，即可开启监控界面。
 
+#### 添加监控程序日志消费者
+
+```text
+CockroachConfig config = new CockroachConfig().addLogConsumer(CockroachMonitorConsumer.class);
+```
+
 ![web-main](docs/images/main.png)
 
 ![web-task](docs/images/task.png)
