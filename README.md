@@ -61,8 +61,6 @@ CockroachConfig config = new CockroachConfig().addLogConsumer(CockroachMonitorCo
 
 ![web-task](docs/images/task.png)
 
-关于
-
 ## 联系方式
 * 邮箱： zhangyw001@gmail.com
 * 微信： fengche361
