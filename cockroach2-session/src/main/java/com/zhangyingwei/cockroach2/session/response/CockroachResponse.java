@@ -4,8 +4,6 @@ import cn.wanghaomiao.xpath.exception.XpathSyntaxErrorException;
 import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.queue.ICQueue;
 import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
@@ -34,9 +32,9 @@ public class CockroachResponse {
     @Getter@Setter
     private CockroachResponseContent content;
     @Getter @Setter
-    private ResponseHeaders headers;
+    private CockroachResponseHeaders headers;
 
-    public CockroachResponse(CockroachResponseContent content, ResponseHeaders header, Integer code, Boolean success) {
+    public CockroachResponse(CockroachResponseContent content, CockroachResponseHeaders header, Integer code, Boolean success) {
         this.task = task;
         this.content = content;
         this.headers = header;

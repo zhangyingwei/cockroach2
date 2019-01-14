@@ -7,7 +7,7 @@ import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
 import com.zhangyingwei.cockroach2.session.request.CockroachRequest;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
 import com.zhangyingwei.cockroach2.session.response.CockroachResponseContent;
-import com.zhangyingwei.cockroach2.session.response.ResponseHeaders;
+import com.zhangyingwei.cockroach2.session.response.CockroachResponseHeaders;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONObject;
 import okhttp3.*;
@@ -50,7 +50,7 @@ public class COkHttpClient implements ICHttpClient {
             throw new TaskExecuteException(e);
         }
         CockroachResponseContent content = null;
-        ResponseHeaders header = null;
+        CockroachResponseHeaders header = null;
         Integer code = 500;
         Boolean success = false;
         if (response != null) {
@@ -59,7 +59,7 @@ public class COkHttpClient implements ICHttpClient {
             } catch (IOException e) {
                 log.error("get response body error: {} ",e.getLocalizedMessage());
             }
-            header = new ResponseHeaders(response.headers().toMultimap());
+            header = new CockroachResponseHeaders(response.headers().toMultimap());
             code = response.code();
             success = true;
         }

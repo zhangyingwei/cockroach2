@@ -14,7 +14,7 @@ import java.util.Map;
  * @desc:
  */
 @RequiredArgsConstructor
-public class ResponseHeaders {
+public class CockroachResponseHeaders {
     @Setter @NonNull
     private Map<String, List<String>> headers;
 
