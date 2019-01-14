@@ -16,7 +16,7 @@ cockroach2 是 [cockraoch](https://github.com/zhangyingwei/cockroach) 的完全�
 
 没错，还是一个小巧、灵活、健壮的爬虫框架。
 
-简单到什么程度呢，任然是几句话就可以创建一个爬虫。
+简单到什么程度呢，仍然是几句话就可以创建一个爬虫。
 
 ## 快速开始
 
