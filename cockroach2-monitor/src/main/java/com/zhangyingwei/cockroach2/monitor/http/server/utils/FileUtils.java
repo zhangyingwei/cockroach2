@@ -1,15 +1,21 @@
 package com.zhangyingwei.cockroach2.monitor.http.server.utils;
 
+import com.zhangyingwei.cockroach2.monitor.http.server.CockroachHttpServer;
+
 import java.io.*;
+import java.net.URL;
 import java.util.stream.Collectors;
 
 public class FileUtils {
 
-    public static String getContent(String filePath) throws FileNotFoundException {
-        File file = new File(filePath);
+    public static String getContent(Class<CockroachHttpServer> clazz, URL filePath) throws IOException {
+        InputStream inputStream = clazz.getClassLoader().getResourceAsStream(filePath.getPath());
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(file));
+            if (inputStream == null) {
+                inputStream = filePath.openStream();
+            }
+            reader = new BufferedReader(new InputStreamReader(inputStream));
             String result = reader.lines().collect(Collectors.joining("\n"));
             return result;
         }finally {
@@ -23,7 +29,15 @@ public class FileUtils {
         }
     }
 
-    public static boolean exits(String staticPath) {
-        return new File(staticPath).exists();
+    public static boolean exits(Class<CockroachHttpServer> clazz, URL staticPath) {
+        try {
+            InputStream res = clazz.getClassLoader().getResourceAsStream(staticPath.getPath());
+            if (res == null) {
+                staticPath.openStream();
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

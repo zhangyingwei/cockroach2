@@ -16,13 +16,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 @Slf4j
 public class CockroachHttpServer {
     private Thread httpThread;
-    private URL staticBasePath = CockroachHttpServer.class.getResource("/static");
-    private URL templateBasePath = CockroachHttpServer.class.getResource("/templates");
+    private String staticBasePath = "/static";
+    private String templateBasePath = "/templates";
     private Map<String, ICAction> actionMap = new ConcurrentHashMap<String, ICAction>();
 
     public CockroachHttpServer() {
@@ -124,32 +123,38 @@ public class CockroachHttpServer {
 
             private void doResponse(Request request, Response response) {
                 String path = request.getPath();
-                String staticPath = staticBasePath.getPath().concat(File.separator).concat(path);
+                URL staticPath = this.getResourcesUrl(staticBasePath.concat(path));
                 ICAction action = actionMap.get(path);
                 try {
                     if (action != null) {
                         response.resourcesOk();
                         String result = action.doAction(request, response);
-                        String htmlPath = templateBasePath.getPath().concat(File.separator).concat(result);
+                        URL htmlPath = this.getResourcesUrl(templateBasePath.concat("/").concat(result));
                         if (response.getHeader().getContentType().contains("text/html")) {
-                            response.getWriter().println(FileUtils.getContent(htmlPath));
+                            response.getWriter().println(FileUtils.getContent(CockroachHttpServer.class, htmlPath));
                         } else if (response.getHeader().getContentType().contains("application/json")) {
                             response.getWriter().println(result);
                         } else {
                             log.error(response.getHeader().getContentType());
                         }
                     } else {
-                        if (FileUtils.exits(staticPath)) {
-                            response.resourcesOk().getWriter().println(FileUtils.getContent(staticPath));
+                        if (FileUtils.exits(CockroachHttpServer.class,staticPath)) {
+                            response.resourcesOk().getWriter().println(FileUtils.getContent(CockroachHttpServer.class,staticPath));
                         } else {
                             response.resourcesNotFound();
                         }
                     }
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 } finally {
                     response.getWriter().flush();
                 }
+            }
+
+            private URL getResourcesUrl(String concat) {
+                return CockroachHttpServer.class.getResource(concat);
             }
         }
 
