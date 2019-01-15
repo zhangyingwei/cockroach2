@@ -11,7 +11,8 @@ import com.zhangyingwei.cockroach2.common.utils.LogUtils;
 import com.zhangyingwei.cockroach2.common.utils.ThreadSleepTool;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
-import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
+import com.zhangyingwei.cockroach2.core.listener.GlobalListener;
+import com.zhangyingwei.cockroach2.core.listener.ICListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
@@ -30,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class TaskExecutor implements ICTaskExecutor,Runnable {
-    protected final TaskExecuteListener taskExecuteListener;
+    protected final GlobalListener listener;
     @Getter
     private String name = Constants.THREAD_NAME_EXECUTER + IdUtils.getId("TaskExecotor");
     private Boolean keepRun = true;
@@ -54,7 +55,7 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
         this.proxy = config.newProxyGenerator();
         this.store = config.newStore();
         this.sleepTool = this.getSleepTool(config);
-        this.taskExecuteListener = new TaskExecuteListener(config);
+        this.listener = new GlobalListener(config);
         this.asyncManager = config.getAsyncManager();
     }
 
@@ -63,29 +64,31 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
         Task task = this.queue.get();
         try {
             if (task != null) {
-                //listener
-                asyncManager.doVoidMethodAsync(() -> taskExecuteListener.before(task));
+                //task before
+                asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_BEFORE, task));
                 if (this.validTask(task.statu(Task.Statu.VALID))) {
                     CockroachRequest request = new CockroachRequest(task.statu(Task.Statu.EXECUTE));
                     ProxyInfo proxyInfo = null;
                     if (proxy != null) {
                         proxyInfo = proxy.generate(task);
                     }
-                    asyncManager.doVoidMethodAsync(() -> taskExecuteListener.execute(task));
+                    // task execute
+                    asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_EXECUTE, task));
                     CockroachResponse response = this.client.proxy(proxyInfo).execute(request);
                     if (response != null && response.isSuccess()) {
                         response.setQueue(this.queue);
                         task.statu(Task.Statu.STORE);
-                        asyncManager.doVoidMethodAsync(() -> taskExecuteListener.store(task));
                         try {
+                            //task store
+                            asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_STORE, task));
                             this.store.store(response);
                             task.statu(Task.Statu.FINISH);
+                            //task finish
+                            asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_FINISH, task));
                         } catch (Exception e) {
                             log.error(e.getLocalizedMessage());
                         }finally {
-                            task.statu(Task.Statu.FAILD);
                             response.close();
-                            asyncManager.doVoidMethodAsync(() -> taskExecuteListener.success(task));
                         }
                     }
                 }
@@ -93,15 +96,17 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
                 log.debug("{}: task is null and {} was over!", LogUtils.getExecutorTagColor("executor"), this.getName());
             }
         } catch (TaskExecuteException e) {
-            asyncManager.doVoidMethodAsync(() -> taskExecuteListener.failed(task));
+            task.statu(Task.Statu.FAILD);
+            //task taild
+            asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_FAILD, task));
             log.info("{}: execure error with task {}: {}", LogUtils.getExecutorTagColor("executor"), task, e.getLocalizedMessage());
             if (task.needRetry()) {
                 this.queue.add(task);
                 log.info("{}: make task retry: {}", LogUtils.getExecutorTagColor("executor"), task);
             }
         }finally {
-            //listener
-            asyncManager.doVoidMethodAsync(() -> taskExecuteListener.after(task));
+            // task after
+            asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_AFTER, task));
         }
         return task;
     }
@@ -120,9 +125,11 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
         Thread.currentThread().setName(this.name);
         this.state = State.RUNNING;
         this.currentThread = Thread.currentThread();
-        asyncManager.doVoidMethodAsync(() -> taskExecuteListener.start(this.getName()));
+        // executor start
+        asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.EXECUTOR_START,this.getName()));
         try {
-            this.taskExecuteListener.executorRunning(this.getName());
+            //executor running
+            asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.EXECUTOR_RUNNING,this.getName()));
             Task task = this.execute();
             while (keepRun && task != null) {
                 task = this.execute();
@@ -133,7 +140,8 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
         } catch (InterruptedException e) {
             log.error(e.getLocalizedMessage());
         }finally {
-            asyncManager.doVoidMethodAsync(() -> taskExecuteListener.stop(this.getName()));
+            //executor end
+            asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.EXECUTOR_END, this.getName()));
             this.state = State.OVER;
         }
     }

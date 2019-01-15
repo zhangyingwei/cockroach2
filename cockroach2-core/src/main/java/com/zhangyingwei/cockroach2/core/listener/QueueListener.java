@@ -19,4 +19,14 @@ public class QueueListener implements ICListener<Task> {
 
     public void create(Class<? extends ICQueue> clazz) {
     }
+
+    @Override
+    public void action(Task msg) {
+
+    }
+
+    @Override
+    public ListenerType type() {
+        return null;
+    }
 }

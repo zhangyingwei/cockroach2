@@ -8,7 +8,7 @@ import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import com.zhangyingwei.cockroach2.common.utils.ThreadSleepTool;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
-import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
+import com.zhangyingwei.cockroach2.core.listener.ICListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import com.zhangyingwei.cockroach2.core.store.IStore;
 import com.zhangyingwei.cockroach2.http.proxy.ProxyInfo;
@@ -29,14 +29,15 @@ public class TmpTaskExecutor extends TaskExecutor{
     @Override
     public void run() {
         super.currentThread = Thread.currentThread();
+        asyncManager.doVoidMethodAsync(() -> super.listener.action(ICListener.ListenerType.EXECUTOR_START, this.getName()));
         Thread.currentThread().setName(Constants.THREAD_NAME_EXECUTER_TMP.concat(IdUtils.getId("executor-tmp")+""));
         try{
             super.state = State.RUNNING;
-            asyncManager.doVoidMethodAsync(() -> super.taskExecuteListener.start(this.getName()));
+            asyncManager.doVoidMethodAsync(() -> super.listener.action(ICListener.ListenerType.EXECUTOR_RUNNING, this.getName()));
             super.execute();
         }finally {
             super.state = State.DEAD;
-            asyncManager.doVoidMethodAsync(() -> taskExecuteListener.stop(this.getName()));
+            asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.EXECUTOR_END, this.getName()));
         }
     }
 }

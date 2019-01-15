@@ -23,7 +23,7 @@ public class Application {
                 .appName("示说网爬虫")
                 .threadSeep(10000)
                 .threadSeepMin(3000)
-                .numThread(1)
+                .numThread(8)
                 .store(MainStore.class)
                 .addLogConsumer(CockroachMonitorConsumer.class);
         CockroachContext context = new CockroachContext(config);

@@ -2,7 +2,8 @@ package com.zhangyingwei.cockroach2.core.executor;
 
 import com.zhangyingwei.cockroach2.common.async.AsyncManager;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
-import com.zhangyingwei.cockroach2.core.listener.ApplicationListener;
+import com.zhangyingwei.cockroach2.core.listener.GlobalListener;
+import com.zhangyingwei.cockroach2.core.listener.ICListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,7 +21,7 @@ public class ExecuterManager {
     private CockroachConfig config;
     private ExecutorService service = Executors.newCachedThreadPool();
     private List<TaskExecutor> executorList = new ArrayList<>();
-    private ApplicationListener applicationListener;
+    private GlobalListener listener;
     private CountDownLatch latch = new CountDownLatch(1);
     private ExecutorFactory executorFactory;
     private AsyncManager asyncManager;
@@ -28,10 +29,11 @@ public class ExecuterManager {
     public ExecuterManager(CockroachConfig config) {
         this.config = config;
         this.asyncManager = config.getAsyncManager();
-        this.applicationListener = new ApplicationListener(this.config);
+        this.listener = new GlobalListener(this.config);
     }
 
     public void start(QueueHandler queue) throws IllegalAccessException, InstantiationException, InterruptedException {
+        this.listener.action(ICListener.ListenerType.APPLICATION_START, null);
         this.executorFactory = new ExecutorFactory(queue, this.config);
         int numThread = this.config.getNumThread();
         for (int i = 0; i < numThread; i++) {
@@ -45,7 +47,6 @@ public class ExecuterManager {
         ));
         monitorThread.setDaemon(true);
         monitorThread.start();
-        this.applicationListener.onStart();
 
         /**
          * 监控所有线程池是否都执行完毕的线程
@@ -61,7 +62,7 @@ public class ExecuterManager {
                 }
                 while (true) {
                     if (this.asyncManager.isTerminated()) {
-                        this.applicationListener.onStop();
+                        this.listener.action(ICListener.ListenerType.APPLICATION_STOP, null);
                         this.config.getLogMsgHandler().shutdown();
                         break;
                     }
@@ -89,6 +90,6 @@ public class ExecuterManager {
         executorList.stream().forEach(taskExecutor -> {
             taskExecutor.stop();
         });
-        this.applicationListener.onStop();
+        this.listener.action(ICListener.ListenerType.APPLICATION_STOP, null);
     }
 }

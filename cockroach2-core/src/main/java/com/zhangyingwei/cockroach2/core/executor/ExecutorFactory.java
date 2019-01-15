@@ -4,7 +4,6 @@ package com.zhangyingwei.cockroach2.core.executor;
 import com.zhangyingwei.cockroach2.common.utils.ThreadSleepTool;
 import com.zhangyingwei.cockroach2.core.config.CockroachConfig;
 import com.zhangyingwei.cockroach2.core.http.CockroachHttpClient;
-import com.zhangyingwei.cockroach2.core.listener.TaskExecuteListener;
 import com.zhangyingwei.cockroach2.core.queue.QueueHandler;
 
 /**

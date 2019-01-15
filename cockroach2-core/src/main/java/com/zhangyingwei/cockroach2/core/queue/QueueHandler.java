@@ -31,6 +31,8 @@ public class QueueHandler implements ICQueue {
     private final Condition condition = lock.newCondition();
     private Long limitSize;
 
+    private QueueHandler(){}
+
     private QueueHandler(Builder builder) {
         this.queue = builder.queue;
         this.filters = builder.filters;
