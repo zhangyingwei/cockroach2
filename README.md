@@ -61,9 +61,7 @@ CockroachConfig config = new CockroachConfig().addLogConsumer(CockroachMonitorCo
 
 ![web-task](docs/images/task.png)
 
-
-具体实例可以参考： [](cockroach2-samples/src/main/java/com/zhangyingwei/cockroach2/samples)
-
+具体实例可以参考： [samples](cockroach2-samples/src/main/java/com/zhangyingwei/cockroach2/samples)
 
 ## 非常重要！！！
 
