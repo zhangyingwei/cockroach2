@@ -64,8 +64,11 @@ CockroachConfig config = new CockroachConfig().addLogConsumer(CockroachMonitorCo
 ## 非常重要！！！
 
 写文档真的是太烦了！
+
 介于api跟第一版本没有太大的出入，可以先参考第一版的文档。
+
 如果不行的话，就加我微信吧！
+
 抽时间再写文档。
 
 ## 联系方式
