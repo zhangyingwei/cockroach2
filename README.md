@@ -63,6 +63,17 @@ CockroachConfig config = new CockroachConfig().addLogConsumer(CockroachMonitorCo
 
 具体实例可以参考： [samples](cockroach2-samples/src/main/java/com/zhangyingwei/cockroach2/samples)
 
+## 变化
+
+花了这么大的精力进行重写，到底与第一版有什么区别呢？
+
+* 结构更加清晰
+* 爬虫执行器的生命周期管理更加清晰
+* 爬虫执行器管理更加智能化
+    * 举个例子： 如果任务队列因为任务数量过多阻塞了，而所有的执行器都因需要提交任务到队列中而被消息队列挡在门外候着，这时程序就会陷入一个死亡宁静中。 而这个时候，程序就会提交一种叫零时工的任务处理器来缓解这种情况。当然这只是一种情况，其他的留在文档里写吧。
+* 增加了生命周期日志
+* 增加了日志订阅功能，可以通过订阅日志，获取程序的运行情况，从而自己实现一些功能。
+
 ## 非常重要！！！
 
 写文档真的是太烦了！
