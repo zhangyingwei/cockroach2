@@ -1,9 +1,13 @@
 package com.zhangyingwei.cockroach2.http.proxy;
 
+import com.zhangyingwei.cockroach2.common.Task;
 import com.zhangyingwei.cockroach2.common.enmus.ProxyType;
 import com.zhangyingwei.cockroach2.common.utils.IdUtils;
 import lombok.*;
-
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.Socket;
 import java.util.Objects;
 
 /**
@@ -34,5 +38,35 @@ public class ProxyInfo {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public boolean valid() {
+        Socket testConnection = null;
+        try {
+            Proxy.Type type = null;
+            switch (this.proxyType) {
+                case HTTP:
+                    type = Proxy.Type.HTTP;
+                    break;
+                case SOCKET5:
+                    type = Proxy.Type.SOCKS;
+                    break;
+                default:
+                    break;
+            }
+            testConnection = new Socket(new Proxy(type, new InetSocketAddress(this.ip, this.port)));
+            testConnection.connect(new InetSocketAddress("8.8.8.8", 53));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }finally {
+            if (testConnection != null) {
+                try {
+                    testConnection.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

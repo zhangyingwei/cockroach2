@@ -56,7 +56,11 @@ public class CockroachHttpClient implements ICHttpClient {
 
     @Override
     public ICHttpClient proxy(ProxyInfo proxyInfo) {
-        this.client.proxy(proxyInfo);
+        if (proxyInfo.valid()) {
+            this.client.proxy(proxyInfo);
+        } else {
+            log.warn("proxy: {} not valid, connect without proxy");
+        }
         return this;
     }
 }
