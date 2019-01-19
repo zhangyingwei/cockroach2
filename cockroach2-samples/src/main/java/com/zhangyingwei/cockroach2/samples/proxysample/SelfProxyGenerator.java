@@ -16,7 +16,7 @@ public class SelfProxyGenerator implements ICGenerator<ProxyInfo> {
     @Override
     public ProxyInfo generate(Task task) {
         ProxyInfo proxyInfo = new ProxyInfo("119.101.113.232", 9999, ProxyType.HTTP);
-        log.info("{} do with proxy: {} - {}", task.getUrl(), proxyInfo, proxyInfo.valid(task));
+        log.info("{} do with proxy: {} - {}", task.getUrl(), proxyInfo, proxyInfo.valid());
         return proxyInfo;
     }
 }
