@@ -5,7 +5,7 @@
     <parent>
         <artifactId>cockroach2</artifactId>
         <groupId>com.zhangyingwei.cockroach2</groupId>
-        <version>${cockroach2.version}</version>
+        <version>0.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.zhangyingwei.cockroach2</groupId>
             <artifactId>cockroach2-core</artifactId>
-            <version>${cockroach2.version}</version>
+            <version>0.0.2</version>
         </dependency>
     </dependencies>
 
