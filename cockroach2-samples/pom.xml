@@ -15,7 +15,6 @@
         <dependency>
             <groupId>com.zhangyingwei.cockroach2</groupId>
             <artifactId>cockroach2-core</artifactId>
-            <version>0.0.2</version>
         </dependency>
     </dependencies>
 

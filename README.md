@@ -23,6 +23,19 @@ cockroach2 是 [cockraoch](https://github.com/zhangyingwei/cockroach) 的完全�
 ### 依赖部分
 
 ```xml
+<repositories>
+    <repository>
+        <id>cockroach2</id>
+        <url>https://raw.github.com/zhangyingwei/cockroach2/mvn-repo/</url>
+        <snapshots>
+            <enabled>true</enabled>
+            <updatePolicy>always</updatePolicy>
+        </snapshots>
+    </repository>
+</repositories>
+```
+
+```xml
 <dependency>
     <groupId>com.zhangyingwei.cockroach2</groupId>
     <artifactId>cockroach2-core</artifactId>
