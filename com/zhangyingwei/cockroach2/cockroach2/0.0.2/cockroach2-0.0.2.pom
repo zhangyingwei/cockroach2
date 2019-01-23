@@ -193,7 +193,7 @@
                 <version>0.12</version>
                 <configuration>
                     <!-- git commit message -->
-                    <message>Maven artifacts for ${project.version} in ${maven.build.timestamp.format} at ${env.os.name} by ${env.user.name}</message>
+                    <message>Maven artifacts for ${project.version} in ${maven.build.timestamp} at ${env.OS} by ${env.USERNAME}</message>
                     <!-- disable webpage processing -->
                     <noJekyll>true</noJekyll>
                     <!-- matches distribution management repository url above -->
