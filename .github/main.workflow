@@ -5,7 +5,7 @@ workflow "New workflow" {
 
 action "tag-filter" {
   uses = "actions/bin/filter@707718ee26483624de00bd146e073d915139a3d8"
-  args = "tag"
+  args = "tag deploy-*"
 }
 
 action "clean and deploy" {
