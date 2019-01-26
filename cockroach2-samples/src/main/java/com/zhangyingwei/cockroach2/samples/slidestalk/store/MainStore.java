@@ -29,4 +29,7 @@ public class MainStore implements IStore {
             this.categoriesStore.store(response);
         }
     }
+
+    @Override
+    public void faild(CockroachResponse response) {}
 }

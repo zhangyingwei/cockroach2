@@ -40,4 +40,7 @@ public class ImgDowloadStore implements IStore {
 //            e.printStackTrace();
 //        }
     }
+
+    @Override
+    public void faild(CockroachResponse response) {}
 }

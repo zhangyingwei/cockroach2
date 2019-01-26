@@ -9,4 +9,5 @@ import com.zhangyingwei.cockroach2.session.response.CockroachResponse;
  */
 public interface IStore {
     void store(CockroachResponse response);
+    void faild(CockroachResponse response);
 }

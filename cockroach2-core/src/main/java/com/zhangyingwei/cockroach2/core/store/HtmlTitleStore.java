@@ -15,10 +15,11 @@ public class HtmlTitleStore implements IStore {
 
     @Override
     public void store(CockroachResponse response) {
-        if (response.isSuccess()) {
-            log.info("title({})",response.select("title").text());
-        } else {
-            log.info("task error");
-        }
+        log.info("title({})",response.select("title").text());
+    }
+
+    @Override
+    public void faild(CockroachResponse response) {
+        log.info("task faild");
     }
 }

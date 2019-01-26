@@ -62,6 +62,7 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
     @Override
     public Task execute() {
         Task task = this.queue.get();
+        CockroachResponse response = null;
         try {
             if (task != null) {
                 //task before
@@ -74,7 +75,7 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
                     }
                     // task execute
                     asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_EXECUTE, task));
-                    CockroachResponse response = this.client.proxy(proxyInfo).execute(request);
+                    response = this.client.proxy(proxyInfo).execute(request);
                     if (response != null && response.isSuccess()) {
                         response.setQueue(this.queue);
                         task.statu(Task.Statu.STORE);
@@ -87,9 +88,11 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
                             asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_FINISH, task));
                         } catch (Exception e) {
                             log.error(e.getLocalizedMessage());
-                        }finally {
+                        } finally {
                             response.close();
                         }
+                    } else {
+                        throw new TaskExecuteException("execute not success");
                     }
                 }
             } else {
@@ -103,6 +106,9 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
             if (task.needRetry()) {
                 this.queue.add(task);
                 log.info("{}: make task retry: {}", LogUtils.getExecutorTagColor("executor"), task);
+            } else {
+                //on faild
+                this.store.faild(response);
             }
         }finally {
             // task after

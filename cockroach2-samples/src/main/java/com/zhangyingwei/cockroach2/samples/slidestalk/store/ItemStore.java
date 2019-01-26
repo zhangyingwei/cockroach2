@@ -43,4 +43,7 @@ public class ItemStore implements IStore {
             this.imageDowload.store(response);
         }
     }
+
+    @Override
+    public void faild(CockroachResponse response) {}
 }

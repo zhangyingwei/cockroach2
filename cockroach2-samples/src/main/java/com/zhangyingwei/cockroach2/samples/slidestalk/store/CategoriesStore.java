@@ -28,4 +28,7 @@ public class CategoriesStore implements IStore {
             this.itemStore.store(response);
         }
     }
+
+    @Override
+    public void faild(CockroachResponse response) {}
 }

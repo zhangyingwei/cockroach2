@@ -14,10 +14,11 @@ import java.io.IOException;
 public class PrintStore implements IStore {
     @Override
     public void store(CockroachResponse response) {
-        if (response.isSuccess()) {
-            log.info("responst: " + response.getContent().charset("UTF-8").string());
-        } else {
-            log.info("task error");
-        }
+        log.info("responst: " + response.getContent().charset("UTF-8").string());
+    }
+
+    @Override
+    public void faild(CockroachResponse response) {
+        log.info("task faild");
     }
 }

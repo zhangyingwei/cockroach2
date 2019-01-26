@@ -50,4 +50,9 @@ public class GuShiStore implements IStore {
                     });
         }
     }
+
+    @Override
+    public void faild(CockroachResponse response) {
+        System.out.println("task faild");
+    }
 }
