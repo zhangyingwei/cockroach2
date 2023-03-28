@@ -59,7 +59,7 @@ public class CockroachHttpClient implements ICHttpClient {
         if (proxyInfo!=null && proxyInfo.valid()) {
             this.client.proxy(proxyInfo);
         } else {
-            log.warn("proxy: {} not valid, connect without proxy");
+            log.debug("proxy: {} not valid, connect without proxy", proxyInfo);
         }
         return this;
     }

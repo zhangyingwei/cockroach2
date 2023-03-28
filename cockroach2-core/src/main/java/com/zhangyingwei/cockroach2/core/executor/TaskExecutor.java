@@ -100,14 +100,14 @@ public class TaskExecutor implements ICTaskExecutor,Runnable {
             }
         } catch (TaskExecuteException e) {
             task.statu(Task.Statu.FAILD);
-            //task taild
+            //task failed
             asyncManager.doVoidMethodAsync(() -> listener.action(ICListener.ListenerType.TASK_FAILD, task));
             log.info("{}: execure error with task {}: {}", LogUtils.getExecutorTagColor("executor"), task, e.getLocalizedMessage());
             if (task.needRetry()) {
                 this.queue.add(task);
                 log.info("{}: make task retry: {}", LogUtils.getExecutorTagColor("executor"), task);
             } else {
-                //on faild
+                //on failed
                 this.store.faild(response);
             }
         }finally {

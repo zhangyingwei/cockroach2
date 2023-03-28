@@ -24,22 +24,19 @@ cockroach2 是 [cockraoch](https://github.com/zhangyingwei/cockroach) 的完全�
 
 ```xml
 <repositories>
-    <repository>
-        <id>cockroach2</id>
-        <url>https://raw.github.com/zhangyingwei/cockroach2/mvn-repo/</url>
-        <snapshots>
-            <enabled>true</enabled>
-            <updatePolicy>always</updatePolicy>
-        </snapshots>
-    </repository>
+  <repository>
+    <id>github</id>
+    <name>GitHub OWNER Apache Maven Packages</name>
+    <url>https://maven.pkg.github.com/zhangyingwei/cockroach2</url>
+  </repository>
 </repositories>
 ```
 
 ```xml
 <dependency>
-    <groupId>com.zhangyingwei.cockroach2</groupId>
+    <groupId>com.zhangyingwei</groupId>
     <artifactId>cockroach2-core</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.7</version>
 </dependency>
 ```
 
