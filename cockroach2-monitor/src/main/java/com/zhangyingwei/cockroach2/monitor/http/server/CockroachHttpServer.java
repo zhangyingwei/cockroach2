@@ -105,7 +105,7 @@ public class CockroachHttpServer {
             public void run() {
                 try {
                     Request request = new Request(this.currentSocket);
-                    log.info("{} : {}", request.getMethod(), request.getPath());
+                    log.debug("{} : {}", request.getMethod(), request.getPath());
                     Response response = new Response(this.currentSocket, request);
                     this.doResponse(request,response);
                 } catch (IOException e) {

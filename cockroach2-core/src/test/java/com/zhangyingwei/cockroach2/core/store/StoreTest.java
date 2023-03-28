@@ -20,4 +20,9 @@ public class StoreTest implements IStore{
             log.info(ele.attr("title"));
         });
     }
+
+    @Override
+    public void faild(CockroachResponse response) {
+        // failed
+    }
 }

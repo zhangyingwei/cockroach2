@@ -55,8 +55,9 @@ public class COkHttpClient implements ICHttpClient {
         Boolean success = false;
         if (response != null) {
             try {
-                content = new CockroachResponseContent(response.body().bytes());
-            } catch (IOException e) {
+                assert response.body() != null;
+                content = new CockroachResponseContent(response.body().byteStream());
+            } catch (Exception e) {
                 log.error("get response body error: {} ",e.getLocalizedMessage());
             }
             header = new CockroachResponseHeaders(response.headers().toMultimap());

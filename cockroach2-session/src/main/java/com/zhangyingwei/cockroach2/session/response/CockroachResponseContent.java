@@ -11,6 +11,7 @@ import net.sf.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -27,6 +28,7 @@ public class CockroachResponseContent {
     @Getter
     @Setter
     @NonNull
+    private InputStream inputStream;
     private byte[] bytes;
     @Getter
     private String charset;
@@ -38,22 +40,41 @@ public class CockroachResponseContent {
     public String string() {
         try {
             if (this.charset != null) {
-                return new String(this.bytes, this.charset);
+                return new String(this.bytes(), this.charset);
             } else {
-                return new String(this.bytes);
+                return new String(this.bytes());
             }
-        } catch (UnsupportedEncodingException e) {
+        } catch (Exception e) {
             log.info("to string error: {}", e.getLocalizedMessage());
+            throw new RuntimeException(e.getLocalizedMessage());
         }
-        return "";
     }
 
     public byte[] bytes() throws IOException {
-        return bytes;
+        if (this.bytes == null || this.bytes.length == 0) {
+            ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+            byte[] bytes = new byte[1024];
+            int length = this.inputStream.read(bytes);
+            while (length > 0) {
+                byteStream.write(bytes, 0, length);
+                length = this.inputStream.read(bytes);
+            }
+            this.bytes = byteStream.toByteArray();
+        }
+        return this.bytes;
+    }
+
+    /**
+     * 输入流，主要用于下载数据
+     * @return
+     */
+    public InputStream stream() {
+        return this.inputStream;
     }
 
     /**
      * 设置编码
+     *
      * @param charset
      * @return
      */
@@ -64,6 +85,7 @@ public class CockroachResponseContent {
 
     /**
      * to Jsoup document
+     *
      * @return
      */
     public Document toDocument() {
@@ -75,6 +97,7 @@ public class CockroachResponseContent {
 
     /**
      * to xpath document
+     *
      * @return
      */
     public JXDocument toXDocument() {
@@ -86,6 +109,7 @@ public class CockroachResponseContent {
 
     /**
      * to json object
+     *
      * @return
      */
     public JSONObject toJsobOject() {
@@ -97,6 +121,7 @@ public class CockroachResponseContent {
 
     /**
      * to json array
+     *
      * @return
      */
     public JSONArray toJsonArray() {

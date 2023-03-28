@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +82,10 @@ public class CockroachResponse {
     }
 
     public void close() {
-
+        try {
+            this.getContent().getInputStream().close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
